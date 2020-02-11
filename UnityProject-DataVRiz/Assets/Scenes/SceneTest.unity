@@ -386,7 +386,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PointPrefab: {fileID: 8128455112396568255, guid: d3c5d5c4d72bdf54b935f7e503dc397f,
     type: 3}
-  dataFile: charPersonRandomData
+  dataFile: charPersonRandomNoisyData
 --- !u!4 &1960454940
 Transform:
   m_ObjectHideFlags: 0

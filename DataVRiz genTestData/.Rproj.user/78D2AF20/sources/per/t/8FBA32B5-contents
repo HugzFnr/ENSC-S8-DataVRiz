@@ -3,6 +3,12 @@ sizeCm<-rnorm(n=100,mean=175,sd=15)
 massKg<-sizeCm*0.5
 age<-rnorm(n=100,mean=50,sd=10)
 
-table<-data.frame(sizeCm,massKg,age)
+massKgNoisy<-jitter(massKg,factor=1000)
 
-write.table(table,"charPersonRandomData.txt",sep=",")
+cleanData<-data.frame(sizeCm,massKg,age)
+
+noisyData<-data.frame(sizeCm,massKgNoisy,age)
+
+write.table(cleanData,"charPersonRandomData.txt",sep=",")
+
+write.table(noisyData,"charPersonRandomNoisyData.txt",sep=",")
