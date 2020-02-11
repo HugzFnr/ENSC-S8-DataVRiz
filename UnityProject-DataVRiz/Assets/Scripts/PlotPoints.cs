@@ -12,7 +12,8 @@ public class PlotPoints : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        pointsList = TxtReader.Read("Assets/Resources/" + dataFile + ".txt");
+        Resources.Load(dataFile + ".txt");
+        pointsList = TxtReader.Read(Application.dataPath + "/Resources/" + dataFile + ".txt");
         foreach (DataLine d in pointsList)
         {
             GameObject n = Instantiate(PointPrefab, new Vector3(d.XValue, d.YValue, d.ZValue), Quaternion.identity);

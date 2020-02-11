@@ -12,6 +12,7 @@ public class TxtReader
         List<DataLine> pointsList = new List<DataLine>();
         char separator = ','; //default
 
+        var text = Resources.Load<TextAsset>(filePath);
         using (StreamReader sr = new StreamReader(filePath))
         {   
             //Debug.Log(filePath);
@@ -54,8 +55,8 @@ public class TxtReader
 
             //Debug.Log("tent x :" + xvalue + "\n tent y : " + yvalue + "\n tent z : " + zvalue);
             pointsList.Add(new DataLine(label,
-                float.Parse(xvalue, CultureInfo.InvariantCulture),
-                float.Parse(yvalue, CultureInfo.InvariantCulture),
+                float.Parse(xvalue, CultureInfo.InvariantCulture)-170,
+                float.Parse(yvalue, CultureInfo.InvariantCulture)-85,
                 float.Parse(zvalue, CultureInfo.InvariantCulture))); //risky, should use try parses
             line = sr.ReadLine();
             }
