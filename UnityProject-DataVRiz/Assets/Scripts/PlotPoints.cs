@@ -6,6 +6,7 @@ public class PlotPoints : MonoBehaviour
 {
     public GameObject PointPrefab;
     public string dataFile;
+    public GameObject PointHolder;
 
     private List<DataLine> pointsList;
     // Start is called before the first frame update
@@ -14,7 +15,9 @@ public class PlotPoints : MonoBehaviour
         pointsList = TxtReader.Read("Assets/Resources/" + dataFile + ".txt");
         foreach (DataLine d in pointsList)
         {
-            Instantiate(PointPrefab, new Vector3(d.XValue, d.YValue, d.ZValue), Quaternion.identity);
+            GameObject n = Instantiate(PointPrefab, new Vector3(d.XValue, d.YValue, d.ZValue), Quaternion.identity);
+            n.transform.parent = PointHolder.transform;
+            n.transform.name = d.Label;
         }
     }
 

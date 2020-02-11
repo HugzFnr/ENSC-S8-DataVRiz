@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System;
 using UnityEngine;
+using System.Globalization;
 
 public class TxtReader
 {
@@ -13,8 +14,9 @@ public class TxtReader
 
         using (StreamReader sr = new StreamReader(filePath))
         {   
-            Debug.Log(filePath);
-            Debug.Log("rep actif :" + Directory.GetCurrentDirectory());
+            //Debug.Log(filePath);
+            //Debug.Log("rep actif :" + Directory.GetCurrentDirectory());
+
             //first line will be used to name axis, but skipped for now
             sr.ReadLine();
 
@@ -30,8 +32,7 @@ public class TxtReader
 
                 foreach (char ch in line)
                 {
-                    if (ch == '.') replace=',';
-                    else replace = ch; //test pr le input string format wrong
+                    replace = ch; //test pr le input string format wrong
                     if (ch == separator) step++;
                     else if (step == 0)
                     {
@@ -52,7 +53,10 @@ public class TxtReader
                 }
 
             //Debug.Log("tent x :" + xvalue + "\n tent y : " + yvalue + "\n tent z : " + zvalue);
-            pointsList.Add(new DataLine(label, float.Parse(xvalue), float.Parse(yvalue), float.Parse(zvalue))); //risky, should use try parses
+            pointsList.Add(new DataLine(label,
+                float.Parse(xvalue, CultureInfo.InvariantCulture),
+                float.Parse(yvalue, CultureInfo.InvariantCulture),
+                float.Parse(zvalue, CultureInfo.InvariantCulture))); //risky, should use try parses
             line = sr.ReadLine();
             }
         }
