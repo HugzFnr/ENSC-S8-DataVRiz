@@ -12,7 +12,9 @@ public class TxtReader
         char separator = ','; //default
 
         using (StreamReader sr = new StreamReader(filePath))
-        {
+        {   
+            Debug.Log(filePath);
+            Debug.Log("rep actif :" + Directory.GetCurrentDirectory());
             //first line will be used to name axis, but skipped for now
             sr.ReadLine();
 
@@ -23,30 +25,33 @@ public class TxtReader
                 string xvalue="";
                 string yvalue="";
                 string zvalue="";
+                char replace=' ';
                 int step = 0; //0 is waiting for label; 1 is label assigned, 2 is xvalue assigned, 4 is complete
 
                 foreach (char ch in line)
                 {
+                    if (ch == '.') replace=',';
+                    else replace = ch; //test pr le input string format wrong
                     if (ch == separator) step++;
                     else if (step == 0)
                     {
-                        label += ch;
+                        label += replace;
                     }
                     else if (step==1)
                     {
-                        xvalue += ch;
+                        xvalue += replace;
                     }
                     else if (step==2)
                     {
-                        yvalue += ch;
+                        yvalue += replace;
                     }
                     else if (step==3)
                     {
-                        zvalue += ch;
+                        zvalue += replace;
                     }
                 }
 
-
+            //Debug.Log("tent x :" + xvalue + "\n tent y : " + yvalue + "\n tent z : " + zvalue);
             pointsList.Add(new DataLine(label, float.Parse(xvalue), float.Parse(yvalue), float.Parse(zvalue))); //risky, should use try parses
             line = sr.ReadLine();
             }
