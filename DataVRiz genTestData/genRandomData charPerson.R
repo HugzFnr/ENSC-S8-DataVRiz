@@ -12,3 +12,5 @@ noisyData<-data.frame(sizeCm,massKgNoisy,age)
 write.table(cleanData,"charPersonRandomData.txt",sep=",")
 
 write.table(noisyData,"charPersonRandomNoisyData.txt",sep=",")
+
+write.table(noisyData, "testCSV.csv",sep=",")

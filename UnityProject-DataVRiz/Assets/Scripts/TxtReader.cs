@@ -7,23 +7,26 @@ using System.Globalization;
 
 public class TxtReader
 {
-    public static List<DataLine> Read(string filePath)
+    public static List<DataLine> Read(string text)
     {
         List<DataLine> pointsList = new List<DataLine>();
         char separator = ','; //default
+  
+        //Debug.Log(filePath);
+        //Debug.Log("rep actif :" + Directory.GetCurrentDirectory());
 
-        var text = Resources.Load<TextAsset>(filePath);
-        using (StreamReader sr = new StreamReader(filePath))
-        {   
-            //Debug.Log(filePath);
-            //Debug.Log("rep actif :" + Directory.GetCurrentDirectory());
+        //first line will be used to name axis, but skipped for now
+        bool isLabelLine = true;    
 
-            //first line will be used to name axis, but skipped for now
-            sr.ReadLine();
-
-            string line = sr.ReadLine();
-            while (line!=null)
-            {
+            foreach (var line in text.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
+            { 
+                if (isLabelLine)
+                {
+                //assign labels
+                isLabelLine = false;
+                }
+                else
+                {            
                 string label="";
                 string xvalue="";
                 string yvalue="";
@@ -52,14 +55,15 @@ public class TxtReader
                         zvalue += replace;
                     }
                 }
+            
 
-            //Debug.Log("tent x :" + xvalue + "\n tent y : " + yvalue + "\n tent z : " + zvalue);
-            pointsList.Add(new DataLine(label,
-                float.Parse(xvalue, CultureInfo.InvariantCulture)-170,
+                //Debug.Log("tent x :" + xvalue + "\n tent y : " + yvalue + "\n tent z : " + zvalue);
+                pointsList.Add(new DataLine(label,
+                float.Parse(xvalue, CultureInfo.InvariantCulture)-170, //temp, before posiotining data
                 float.Parse(yvalue, CultureInfo.InvariantCulture)-85,
-                float.Parse(zvalue, CultureInfo.InvariantCulture))); //risky, should use try parses
-            line = sr.ReadLine();
-            }
+                float.Parse(zvalue, CultureInfo.InvariantCulture))); //risky, should use try parses                                                                    
+          
+                }
         }
 
         return pointsList;
