@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System;
-using UnityEngine;
 using System.Globalization;
 
 public class TxtReader
@@ -11,7 +10,7 @@ public class TxtReader
     {
         List<DataLine> pointsList = new List<DataLine>();
         char separator = ','; //default
-  
+
         //Debug.Log(filePath);
         //Debug.Log("rep actif :" + Directory.GetCurrentDirectory());
 
@@ -28,9 +27,9 @@ public class TxtReader
                 else
                 {            
                 string label="";
-                string xvalue="";
-                string yvalue="";
-                string zvalue="";
+                string xValue="";
+                string yValue="";
+                string zValue="";
                 char replace=' ';
                 int step = 0; //0 is waiting for label; 1 is label assigned, 2 is xvalue assigned, 4 is complete
 
@@ -44,29 +43,72 @@ public class TxtReader
                     }
                     else if (step==1)
                     {
-                        xvalue += replace;
+                        xValue += replace;
                     }
                     else if (step==2)
                     {
-                        yvalue += replace;
+                        yValue += replace;
                     }
                     else if (step==3)
                     {
-                        zvalue += replace;
+                        zValue += replace;
                     }
                 }
-            
+
+                float xParsedValue = float.Parse(xValue, CultureInfo.InvariantCulture);
+                float yParsedValue = float.Parse(yValue, CultureInfo.InvariantCulture);
+                float zParsedValue = float.Parse(zValue, CultureInfo.InvariantCulture);              
+
 
                 //Debug.Log("tent x :" + xvalue + "\n tent y : " + yvalue + "\n tent z : " + zvalue);
                 pointsList.Add(new DataLine(label,
-                float.Parse(xvalue, CultureInfo.InvariantCulture)-170, //temp, before posiotining data
-                float.Parse(yvalue, CultureInfo.InvariantCulture)-85,
-                float.Parse(zvalue, CultureInfo.InvariantCulture))); //risky, should use try parses                                                                    
+                xParsedValue,
+                yParsedValue,
+                zParsedValue));                                                               
           
                 }
         }
 
         return pointsList;
+    }
+
+    public static float[] StandardizeData(List<DataLine> points)
+    {
+        float[] meansAndDeviations = new float[6]; //in order : mean of x, sd of x, mean of y, sd of y, mean of z, sd of z
+                                                   //build the xvalues float list then get the mean then use it
+
+        //lists of floats used to get mean and sd
+        List<float> xValues = new List<float>();
+        List<float> yValues = new List<float>();
+        List<float> zValues = new List<float>();
+
+        foreach (DataLine l in points)
+        {
+            xValues.Add(l.XValue);
+            yValues.Add(l.YValue);
+            zValues.Add(l.ZValue);
+        }
+
+        meansAndDeviations[0] = StatsHelper.CalculateMean(xValues);
+        meansAndDeviations[1] = (float) StatsHelper.CalculateSD(xValues);
+        meansAndDeviations[2] = StatsHelper.CalculateMean(yValues);
+        meansAndDeviations[3] =(float) StatsHelper.CalculateSD(yValues);
+        meansAndDeviations[4] = StatsHelper.CalculateMean(zValues);
+        meansAndDeviations[5] = (float) StatsHelper.CalculateSD(zValues);
+
+        foreach (float f in meansAndDeviations)
+        {
+            UnityEngine.Debug.Log(f);
+        }
+
+        foreach (DataLine p in points)
+        {
+            p.XStandardValue = (p.XValue - meansAndDeviations[0]) / meansAndDeviations[1];
+            p.YStandardValue = (p.YValue - meansAndDeviations[2]) / meansAndDeviations[3];
+            p.ZStandardValue = (p.ZValue - meansAndDeviations[4]) / meansAndDeviations[5];
+        }
+
+        return meansAndDeviations;
     }
 
 }

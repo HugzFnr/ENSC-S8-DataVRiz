@@ -36,6 +36,30 @@ public class DataLine
         set { _zValue = value; }
     }
 
+    private float _xStandardValue;
+
+    public float XStandardValue
+    {
+        get { return _xStandardValue; }
+        set { _xStandardValue = value; }
+    }
+
+    private float _yStandardValue;
+
+    public float YStandardValue
+    {
+        get { return _yStandardValue; }
+        set { _yStandardValue = value; }
+    }
+
+    private float _zStandardValue;
+
+    public float ZStandardValue
+    {
+        get { return _zStandardValue; }
+        set { _zStandardValue = value; }
+    }
+
     public DataLine(string label, float x, float y, float z)
     {
         Label = label;
