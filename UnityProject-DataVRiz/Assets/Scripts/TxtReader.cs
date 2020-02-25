@@ -96,10 +96,11 @@ public class TxtReader
         meansAndDeviations[4] = StatsHelper.CalculateMean(zValues);
         meansAndDeviations[5] = (float) StatsHelper.CalculateSD(zValues);
 
-        foreach (float f in meansAndDeviations)
-        {
-            UnityEngine.Debug.Log(f);
-        }
+        //to compare precision with R
+        //foreach (float f in meansAndDeviations)
+        //{
+        //    UnityEngine.Debug.Log(f);
+        //}
 
         foreach (DataLine p in points)
         {
