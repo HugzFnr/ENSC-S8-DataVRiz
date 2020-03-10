@@ -16,10 +16,11 @@ public class InputManager : MonoBehaviour
         //{
         //    Debug.Log(node.uniqueID);
         //}*
-        joysticks = new string[2];
-        joysticks = Input.GetJoystickNames();
-        foreach (string j in joysticks) Debug.Log(j);
-        
+        //joysticks = new string[2];
+        //joysticks = Input.GetJoystickNames();
+        //foreach (string j in joysticks) Debug.Log(j);
+
+
     }
 
     // Update is called once per frame
@@ -32,7 +33,21 @@ public class InputManager : MonoBehaviour
         //    Debug.Log("Accel node " + display);
 
         //}
-        if (Input.GetButtonDown("Button.Three")) Application.Quit();
+        //if (Input.GetButtonDown("Button.Three")) Application.Quit();
 
+        if (Input.GetButton("Fire1"))
+        {
+            Debug.Log("OUII");
+        }
+
+        if (Input.GetKey("3")) //marche pas
+        {
+            Debug.Log("OUII");
+        }
+
+        foreach (string s in Input.GetJoystickNames())
+        {
+            Debug.Log(s);
+        }
     }
 }
