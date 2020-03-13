@@ -5,49 +5,35 @@ using UnityEngine.XR;
 
 public class InputManager : MonoBehaviour
 {
-    List<XRNodeState> list;
     string[] joysticks;
+
+    public float playerSpeed = 3.5f;
+    public bool canFly=true;
+
     // Start is called before the first frame update
     void Start()
     {
-        //list = new List<XRNodeState>();
-        //InputTracking.GetNodeStates(list);
-        //foreach (XRNodeState node in list)
-        //{
-        //    Debug.Log(node.uniqueID);
-        //}*
-        //joysticks = new string[2];
-        //joysticks = Input.GetJoystickNames();
-        //foreach (string j in joysticks) Debug.Log(j);
-
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        //Vector3 display = new Vector3();
-        //foreach (XRNodeState node in list)
+        if (Input.GetButtonDown("Quit"))
+        {
+            Application.Quit();
+            Debug.Log("tentative de quit");
+        }
+
+        if (Input.GetButton("Move"))
+        {
+            transform.position += Camera.main.transform.forward * playerSpeed * Time.deltaTime;
+            //use the canFly accordingly
+        }
+
+        //foreach (string s in Input.GetJoystickNames())
         //{
-        //    node.TryGetAcceleration(out display);
-        //    Debug.Log("Accel node " + display);
-
+        //    Debug.Log(s);
         //}
-        //if (Input.GetButtonDown("Button.Three")) Application.Quit();
-
-        if (Input.GetButton("Fire1"))
-        {
-            Debug.Log("OUII");
-        }
-
-        if (Input.GetKey("3")) //marche pas
-        {
-            Debug.Log("OUII");
-        }
-
-        foreach (string s in Input.GetJoystickNames())
-        {
-            Debug.Log(s);
-        }
     }
 }
