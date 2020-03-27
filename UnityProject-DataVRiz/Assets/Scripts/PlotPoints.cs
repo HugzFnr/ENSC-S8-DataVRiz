@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.UI;
 
 public class PlotPoints : MonoBehaviour
 {
@@ -11,15 +12,16 @@ public class PlotPoints : MonoBehaviour
     public bool useStandardizedData = true;
 
     private List<DataLine> pointsList;
+    private List<string> labelsList;
     // Start is called before the first frame update
     void Start()
     {
         PlotPointsFunction();
+        NameAxis();
     }
 
     public void PlotPointsFunction()
     {
-
         //Debug.Log(dataFileName);
         pointsList = TxtReader.Read(LoadTextFromAsset("DataFiles/" + dataFileName));
         TxtReader.StandardizeData(pointsList); //when mean and SD useful, get them here
@@ -49,6 +51,18 @@ public class PlotPoints : MonoBehaviour
             n.transform.position = new Vector3(xpos+reference.x, ypos+reference.y, zpos+reference.z);
             n.transform.name = d.Label;
         }
+    }
+
+    public void NameAxis()
+    {
+        labelsList = TxtReader.GetVariablesLabels(LoadTextFromAsset("DataFiles/" + dataFileName));
+        foreach (string s in labelsList) Debug.Log(s);
+
+        Transform axisNames = PointHolder.transform.GetChild(1);
+        axisNames.transform.GetChild(0).gameObject.GetComponent<Text>().text = labelsList[0];
+        axisNames.transform.GetChild(1).gameObject.GetComponent<Text>().text = labelsList[1];
+        axisNames.transform.GetChild(2).gameObject.GetComponent<Text>().text = labelsList[2];
+
     }
 
     public string LoadTextFromAsset(string path)

@@ -6,22 +6,18 @@ using System.Globalization;
 
 public class TxtReader
 {
+    static char separator = ','; //default
+
     public static List<DataLine> Read(string text)
     {
         List<DataLine> pointsList = new List<DataLine>();
-        char separator = ','; //default
-
-        //Debug.Log(filePath);
-        //Debug.Log("rep actif :" + Directory.GetCurrentDirectory());
-
-        //first line will be used to name axis, but skipped for now
         bool isLabelLine = true;    
 
             foreach (var line in text.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
             { 
                 if (isLabelLine)
                 {
-                //assign labels
+                //skip first line
                 isLabelLine = false;
                 }
                 else
@@ -72,6 +68,33 @@ public class TxtReader
         return pointsList;
     }
 
+    public static List<string> GetVariablesLabels(string text)
+    {
+        string labelLine = text.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)[0];
+
+        string buffer = "";
+        char replace = ' ';
+
+        List<string> labels = new List<string>();
+
+        foreach (char ch in labelLine)
+        {
+            replace = ch; //test pr le input string format wrong
+            if (ch == separator)
+            {
+                labels.Add(buffer);
+                buffer = "";
+            }
+            else
+            {
+                buffer += ch;
+            }
+        }
+        labels.Add(buffer);
+
+        return labels;
+    }
+
     public static float[] StandardizeData(List<DataLine> points)
     {
         float[] meansAndDeviations = new float[6]; //in order : mean of x, sd of x, mean of y, sd of y, mean of z, sd of z
@@ -111,5 +134,7 @@ public class TxtReader
 
         return meansAndDeviations;
     }
+
+
 
 }
