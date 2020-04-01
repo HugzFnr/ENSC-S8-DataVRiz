@@ -19,6 +19,7 @@ public class InputManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //For Occulus
         if (Input.GetButtonDown("Quit"))
         {
             Application.Quit();
@@ -29,6 +30,13 @@ public class InputManager : MonoBehaviour
         {
             transform.position += Camera.main.transform.forward * playerSpeed * Time.deltaTime;
             //use the canFly accordingly
+        }
+
+        //For cardboard smartphone
+        if (Input.touches.Length >= 2) Application.Quit();
+        foreach (Touch t in Input.touches) //if you keep the cardboard button pressed, you keep on moving in front of you
+        {
+            if (t.phase==TouchPhase.Moved ||t.phase==TouchPhase.Stationary) transform.position += Camera.main.transform.forward * playerSpeed * Time.deltaTime;
         }
 
         //foreach (string s in Input.GetJoystickNames())
