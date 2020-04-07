@@ -125,7 +125,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 177758, guid: 970dd4b9371394fb4890965f608d46fd, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 498412, guid: 970dd4b9371394fb4890965f608d46fd, type: 3}
       propertyPath: m_LocalPosition.x
@@ -726,7 +726,6 @@ MonoBehaviour:
   totalTime: 1
   gvrTimer: 0
   distanceOfRay: 20
-  distanceToSphere: -1
 --- !u!1 &845786492
 GameObject:
   m_ObjectHideFlags: 0
