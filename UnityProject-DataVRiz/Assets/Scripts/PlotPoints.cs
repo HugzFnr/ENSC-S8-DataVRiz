@@ -50,6 +50,7 @@ public class PlotPoints : MonoBehaviour
             Vector3 reference = PointHolder.transform.position;
             n.transform.position = new Vector3(xpos+reference.x, ypos+reference.y, zpos+reference.z);
             n.transform.name = d.Label;
+            n.GetComponent<DataSphereDisplayer>()._dataLine = d;
         }
     }
 
@@ -59,9 +60,9 @@ public class PlotPoints : MonoBehaviour
         foreach (string s in labelsList) Debug.Log(s);
 
         Transform axisNames = PointHolder.transform.GetChild(1);
-        axisNames.transform.GetChild(0).gameObject.GetComponent<Text>().text = labelsList[0];
-        axisNames.transform.GetChild(1).gameObject.GetComponent<Text>().text = labelsList[1];
-        axisNames.transform.GetChild(2).gameObject.GetComponent<Text>().text = labelsList[2];
+        axisNames.transform.GetChild(0).gameObject.GetComponent<Text>().text = "X : " + labelsList[0];
+        axisNames.transform.GetChild(1).gameObject.GetComponent<Text>().text = "Y : " + labelsList[1];
+        axisNames.transform.GetChild(2).gameObject.GetComponent<Text>().text = "Z : " + labelsList[2];
 
     }
 

@@ -69,4 +69,15 @@ public class DataLine
 
     }
 
+    public override string ToString()
+    {
+        return "Label : " + Label
+            +"\nX value : " + XValue
+            + "\nY value : " + YValue
+            + "\nZ value : " + ZValue
+            + "\nStandard X : " + XStandardValue
+            + "\nStandard Y : " + YStandardValue
+            + "\nStandard Z : " + ZStandardValue;
+    }
+
 }

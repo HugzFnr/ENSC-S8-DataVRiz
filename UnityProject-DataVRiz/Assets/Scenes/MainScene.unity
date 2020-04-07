@@ -125,7 +125,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 177758, guid: 970dd4b9371394fb4890965f608d46fd, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 498412, guid: 970dd4b9371394fb4890965f608d46fd, type: 3}
       propertyPath: m_LocalPosition.x
@@ -539,6 +539,18 @@ Transform:
   m_Father: {fileID: 466452393}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 90}
+--- !u!114 &736150939 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 723926960, guid: 60270cf52a5e94998a5a335989159738,
+    type: 3}
+  m_PrefabInstance: {fileID: 222906684}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7dcc90c2e60c4011896c7f21fc1f557, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &736702903
 GameObject:
   m_ObjectHideFlags: 0
@@ -709,10 +721,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cda6932981e91e541b5c07abd7459c23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  scriptGvrReticlePointer: {fileID: 736150939}
   imgCircle: {fileID: 1091398273}
-  totalTime: 2
+  totalTime: 1
   gvrTimer: 0
-  distanceOfRay: 10
+  distanceOfRay: 20
+  distanceToSphere: -1
 --- !u!1 &845786492
 GameObject:
   m_ObjectHideFlags: 0
@@ -993,45 +1007,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7da9be62f3bbb7b40901e8104f0d3652, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Name: 
-  m_EditorClassIdentifier: 
-  imgCircle: {fileID: 1091398273}
-  totalTime: 2
-  gvrStatus: 0
-  gvrTimer: 0
-  distanceOfRay: 10
-  _isLookingAtButton: 0
-  lastObjectGazed: {fileID: 0}
 --- !u!114 &998276752
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1313,7 +1288,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 0.39215687}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1955,45 +1930,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7da9be62f3bbb7b40901e8104f0d3652, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Name: 
-  m_EditorClassIdentifier: 
-  imgCircle: {fileID: 1091398273}
-  totalTime: 2
-  gvrStatus: 0
-  gvrTimer: 0
-  distanceOfRay: 10
-  _isLookingAtButton: 0
-  lastObjectGazed: {fileID: 0}
 --- !u!114 &1713724558
 MonoBehaviour:
   m_ObjectHideFlags: 0

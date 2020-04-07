@@ -6,16 +6,20 @@ using UnityEngine.UI;
 
 public class GazeInteraction2 : MonoBehaviour
 {
+    public GvrReticlePointer scriptGvrReticlePointer;
+
     public Image imgCircle;
     //public UnityEvent gvrClick;
     public float totalTime = 2f;
     bool gvrStatus;
     public float gvrTimer;
 
-    public int distanceOfRay = 10;
+    public int distanceOfRay = 20;
     private RaycastHit _hit;
 
     private bool _isLookingAtButton;
+    private Transform lastSphereGazed=null;
+    private float adaptativeScale;
 
     public bool isLookingAtButton
     {
@@ -23,7 +27,6 @@ public class GazeInteraction2 : MonoBehaviour
         set
         {
             _isLookingAtButton = value;
-            Debug.Log("prop says : " + _isLookingAtButton);
         }
     }
 
@@ -41,26 +44,47 @@ public class GazeInteraction2 : MonoBehaviour
         //    gvrClick.Invoke();
         //}
 
-        Debug.Log("frame");
-        Debug.Log(isLookingAtButton);
-
-        Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f));
+        Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f)); //creates a ray starting at the center of the camera
         if (Physics.Raycast(ray, out _hit, distanceOfRay))
         {
             if (_hit.transform.CompareTag("DataPoint"))
             {
+                float distanceToSphere = Vector3.Distance(_hit.transform.position, transform.position);
+                adaptativeScale = System.Math.Max(0.7f, distanceToSphere / 2.5f);                //distance goes from roughly 1 to 15
+
                 GvrOn(false);
+                _hit.transform.localScale = new Vector3(adaptativeScale, adaptativeScale, adaptativeScale); //should be 0.7f when very close, up to 5f when on the platform's edges
+                _hit.transform.GetChild(0).transform.LookAt(transform.position);    
+                lastSphereGazed = _hit.transform;
             }
 
             if (imgCircle.fillAmount == 1 && _hit.transform.CompareTag("DataPoint"))
             {
-                _hit.transform.gameObject.GetComponent<DataSphereDisplayer>().DisplayTest();
+                _hit.transform.gameObject.GetComponent<DataSphereDisplayer>().ToggleDisplay(adaptativeScale);
+                _hit.transform.gameObject.GetComponent<DataSphereDisplayer>().GazeOn();
                 //GvrOff();
             }
+
+            if (!(_hit.transform.CompareTag("DataPoint") || _hit.transform.CompareTag("Button")))
+            {
+                GvrOff();
+                if (lastSphereGazed != null)
+                {
+                    lastSphereGazed.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+                    lastSphereGazed.gameObject.GetComponent<DataSphereDisplayer>().GazeOff();
+                }
+
+            }             
+
         }
         else if (!isLookingAtButton)
         {
             GvrOff();
+            if (lastSphereGazed != null)
+            {
+                lastSphereGazed.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+                lastSphereGazed.gameObject.GetComponent<DataSphereDisplayer>().GazeOff();
+            }
         }
 
     }
