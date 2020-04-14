@@ -16,6 +16,7 @@ public class PlotPoints : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        labelsList = TxtReader.GetVariablesLabels(LoadTextFromAsset("DataFiles/" + dataFileName));
         PlotPointsFunction();
         NameAxis();
     }
@@ -50,13 +51,15 @@ public class PlotPoints : MonoBehaviour
             Vector3 reference = PointHolder.transform.position;
             n.transform.position = new Vector3(xpos+reference.x, ypos+reference.y, zpos+reference.z);
             n.transform.name = d.Label;
-            n.GetComponent<DataSphereDisplayer>()._dataLine = d;
+            d.XLabel = labelsList[0];
+            d.YLabel = labelsList[1];
+            d.ZLabel = labelsList[2];
+            n.GetComponent<DataSphereDisplayer>().Individual = d;
         }
     }
 
     public void NameAxis()
-    {
-        labelsList = TxtReader.GetVariablesLabels(LoadTextFromAsset("DataFiles/" + dataFileName));
+    {        
         foreach (string s in labelsList) Debug.Log(s);
 
         Transform axisNames = PointHolder.transform.GetChild(1);

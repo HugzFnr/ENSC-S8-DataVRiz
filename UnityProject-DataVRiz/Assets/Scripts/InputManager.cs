@@ -5,8 +5,6 @@ using UnityEngine.XR;
 
 public class InputManager : MonoBehaviour
 {
-    string[] joysticks;
-
     public float playerSpeed = 3.5f;
     public bool canFly=true;
 
@@ -36,12 +34,8 @@ public class InputManager : MonoBehaviour
         if (Input.touches.Length >= 2) Application.Quit();
         foreach (Touch t in Input.touches) //if you keep the cardboard button pressed, you keep on moving in front of you
         {
-            if (t.phase==TouchPhase.Moved ||t.phase==TouchPhase.Stationary) transform.position += Camera.main.transform.forward * playerSpeed * Time.deltaTime;
+            if (t.phase ==TouchPhase.Moved || t.phase==TouchPhase.Stationary) transform.position += Camera.main.transform.forward * playerSpeed * Time.deltaTime;
+            if (t.phase == TouchPhase.Ended) GetComponent<GazeInteraction2>().AdaptSpheresDisplays();
         }
-
-        //foreach (string s in Input.GetJoystickNames())
-        //{
-        //    Debug.Log(s);
-        //}
     }
 }

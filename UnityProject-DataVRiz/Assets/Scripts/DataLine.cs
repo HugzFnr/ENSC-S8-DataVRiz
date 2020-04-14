@@ -12,6 +12,8 @@ public class DataLine
         set { _label = value; }
     }
 
+    //values from dataset
+
     private float _xValue;
 
     public float XValue
@@ -36,6 +38,8 @@ public class DataLine
         set { _zValue = value; }
     }
 
+    //standard values
+    
     private float _xStandardValue;
 
     public float XStandardValue
@@ -60,6 +64,32 @@ public class DataLine
         set { _zStandardValue = value; }
     }
 
+    //labels for each dimension
+
+    private string _xLabel;
+
+    public string XLabel
+    {
+        get { return _xLabel; }
+        set { _xLabel=value; }
+    }
+
+    private string _yLabel;
+
+    public string YLabel
+    {
+        get { return _yLabel; }
+        set { _yLabel=value; }
+    }
+
+    private string _zLabel;
+
+    public string ZLabel
+    {
+        get { return _zLabel; }
+        set { _zLabel=value; }
+    }
+
     public DataLine(string label, float x, float y, float z)
     {
         Label = label;
@@ -71,10 +101,10 @@ public class DataLine
 
     public override string ToString()
     {
-        return "Label : " + Label
-            +"\nX value : " + XValue
-            + "\nY value : " + YValue
-            + "\nZ value : " + ZValue
+        return "Individual's label : " + Label
+            + "\n" + XLabel + " : " + XValue
+            + "\n" + YLabel + " : " + YValue
+            + "\n" + ZLabel + " : " + ZValue
             + "\nStandard X : " + XStandardValue
             + "\nStandard Y : " + YStandardValue
             + "\nStandard Z : " + ZStandardValue;
