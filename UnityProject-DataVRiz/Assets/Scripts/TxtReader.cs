@@ -6,7 +6,7 @@ using System.Globalization;
 
 public class TxtReader
 {
-    static char separator = ','; //default
+    public static char separator = ','; //default
 
     public static List<DataLine> Read(string text)
     {
@@ -79,8 +79,8 @@ public class TxtReader
 
         foreach (char ch in labelLine)
         {
-            replace = ch; //test pr le input string format wrong
-            if (ch == separator)
+            replace = ch; 
+            if (ch == separator && buffer!="") //for those datafiles starting labels line with their separator (why?)
             {
                 labels.Add(buffer);
                 buffer = "";
@@ -133,6 +133,12 @@ public class TxtReader
         }
 
         return meansAndDeviations;
+    }
+
+    public static bool HasSomethingToDisplay(string text)
+    {
+        return true;
+        //should have at least 1 quantitative variable
     }
 
 

@@ -1,8 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.UI;
+
 
 public class PlotPoints : MonoBehaviour
 {
@@ -10,21 +13,31 @@ public class PlotPoints : MonoBehaviour
     public string dataFileName;
     public GameObject PointHolder;
     public bool useStandardizedData = true;
+    public int startIndex = 0;
 
     private List<DataLine> pointsList;
     private List<string> labelsList;
+    private List<TextAsset> textAssetsList;
     // Start is called before the first frame update
     void Start()
     {
-        labelsList = TxtReader.GetVariablesLabels(LoadTextFromAsset("DataFiles/" + dataFileName));
-        PlotPointsFunction();
+        textAssetsList = new List<TextAsset>();
+        InitTextAssetsList();
+        StartVisualization(startIndex);
+    }
+
+    public void StartVisualization(int datasetIndex)
+    {
+        ResetVisualization();
+        labelsList = TxtReader.GetVariablesLabels(textAssetsList[datasetIndex].text);
+        PlotPointsFunction(datasetIndex);
         NameAxis();
     }
 
-    public void PlotPointsFunction()
+    public void PlotPointsFunction(int datasetIndex)
     {
         //Debug.Log(dataFileName);
-        pointsList = TxtReader.Read(LoadTextFromAsset("DataFiles/" + dataFileName));
+        pointsList = TxtReader.Read(textAssetsList[datasetIndex].text);
         TxtReader.StandardizeData(pointsList); //when mean and SD useful, get them here
 
         foreach (DataLine d in pointsList)
@@ -72,10 +85,39 @@ public class PlotPoints : MonoBehaviour
     public string LoadTextFromAsset(string path)
     {
         var textAsset = Resources.Load<TextAsset>(path);
-        //Debug.Log(textAsset);
         if (textAsset != null) return textAsset.text;
         else throw new System.Exception("Data asset could not be loaded at path : " + path);
     }
 
+    public bool IsValidFile(string fileName) //csv and txt are the only data formats both used for statistics and usable via Unity TextAsset
+    {
+        string pathToFile;
+        pathToFile = Application.dataPath + "/Resources/DataFiles/" + fileName;
+        //Debug.Log(pathToFile);
+        if (File.Exists(pathToFile + ".txt") || File.Exists(pathToFile + ".csv")) return true;
+        else return true;
+        
+        //check dimensions via txtReader??
+    }
+
+    public void InitTextAssetsList()
+    {
+        Object[] uncheckedList = Resources.LoadAll("DataFiles", typeof(TextAsset));
+        foreach (object o in uncheckedList)
+        {
+            TextAsset t = (TextAsset) o;
+            if (IsValidFile(t.name) && t.text !="") textAssetsList.Add(t);            
+        }
+    }
+
+    public void ResetVisualization()
+    {
+        int nb = PointHolder.transform.childCount;
+        for (int i=2; i<nb;i++)
+        {
+            Transform t = PointHolder.transform.GetChild(i);
+            Destroy(t.gameObject);
+        }
+    }
 
 }

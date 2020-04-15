@@ -19,6 +19,7 @@ public class GazeInteraction2 : MonoBehaviour
 
     private bool _isLookingAtButton;
     private Transform lastSphereGazed=null;
+    private Transform lastButtonTransform = null;
     private float adaptativeScale;
 
     private List<Transform> activatedSpheres;
@@ -65,11 +66,12 @@ public class GazeInteraction2 : MonoBehaviour
                 lastSphereGazed = _hit.transform;
             }
 
-            if (imgCircle.fillAmount == 1 && _hit.transform.CompareTag("DataPoint"))
+            if (imgCircle.fillAmount == 1 && _hit.transform.CompareTag("DataPoint") && gvrStatus)
             {
                 _hit.transform.gameObject.GetComponent<DataSphereDisplayer>().ToggleDisplay(adaptativeScale);
                 _hit.transform.gameObject.GetComponent<DataSphereDisplayer>().GazeOn();
                 activatedSpheres.Add(_hit.transform);
+                gvrStatus = false;
             }
 
             if (!(_hit.transform.CompareTag("DataPoint") || _hit.transform.CompareTag("Button")))
@@ -88,6 +90,13 @@ public class GazeInteraction2 : MonoBehaviour
             LeaveSphere();
         }
 
+        if (isLookingAtButton && imgCircle.fillAmount == 1 && gvrStatus)
+        {
+            Debug.Log("did a thing!");
+            if (lastButtonTransform != null) lastButtonTransform.gameObject.GetComponent<ButtonActivator>().DoTheThing();
+            gvrStatus = false;
+        }
+
     }
 
     private void LeaveSphere()
@@ -98,6 +107,12 @@ public class GazeInteraction2 : MonoBehaviour
             lastSphereGazed.localScale = new Vector3(0.5f, 0.5f, 0.5f);
             lastSphereGazed.gameObject.GetComponent<DataSphereDisplayer>().GazeOff();
         }
+    }
+
+    public void GvrOnButton(Transform button)
+    {
+        lastButtonTransform = button;
+        GvrOn(true);
     }
 
     public void GvrOn(bool isButton)
