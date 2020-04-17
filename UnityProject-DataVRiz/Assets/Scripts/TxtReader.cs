@@ -165,7 +165,6 @@ public class TxtReader
         string[] secondLine = lines[1].Split(separator);
         for (int i=1; i<secondLine.Length;i++) //doesn't count the first value which is the label
         {
-            UnityEngine.Debug.Log("ligne : " + secondLine[i]);
             if (IsQuantitativeVariable(secondLine[i])) countQuanti++;
             else countQuali++;
         }
