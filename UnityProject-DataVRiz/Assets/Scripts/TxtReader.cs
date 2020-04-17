@@ -18,37 +18,37 @@ public class TxtReader
                 if (isLabelLine)
                 {
                 //skip first line
-                isLabelLine = false;
+                    isLabelLine = false;
                 }
                 else
                 {            
-                string label="";
-                string xValue="";
-                string yValue="";
-                string zValue="";
-                char replace=' ';
-                int step = 0; //0 is waiting for label; 1 is label assigned, 2 is xvalue assigned, 4 is complete
+                    string label="";
+                    string xValue="";
+                    string yValue="";
+                    string zValue="";
+                    char replace=' ';
+                    int step = 0; //0 is waiting for label; 1 is label assigned, 2 is xvalue assigned, 4 is complete
 
-                foreach (char ch in line)
-                {
-                    replace = ch; //test pr le input string format wrong
-                    if (ch == separator) step++;
-                    else if (step == 0)
+                    foreach (char ch in line)
                     {
-                        label += replace;
-                    }
-                    else if (step==1)
-                    {
-                        xValue += replace;
-                    }
-                    else if (step==2)
-                    {
-                        yValue += replace;
-                    }
-                    else if (step==3)
-                    {
-                        zValue += replace;
-                    }
+                        replace = ch; //test pr le input string format wrong
+                        if (ch == separator) step++;
+                        else if (step == 0)
+                        {
+                            label += replace;
+                        }
+                        else if (step==1)
+                        {
+                            xValue += replace;
+                        }
+                        else if (step==2)
+                        {
+                            yValue += replace;
+                        }
+                        else if (step==3)
+                        {
+                            zValue += replace;
+                        }
                 }
 
                 float xParsedValue = float.Parse(xValue, CultureInfo.InvariantCulture);
@@ -80,9 +80,13 @@ public class TxtReader
         foreach (char ch in labelLine)
         {
             replace = ch; 
-            if (ch == separator && buffer!="") //for those datafiles starting labels line with their separator (why?)
+            if (ch == separator && buffer!="" && buffer != "\"\"") //for those datafiles starting labels line with their separator
             {
                 labels.Add(buffer);
+                buffer = "";
+            }
+            else if (buffer == "\"\"") //for csv having a name for the label column
+            {
                 buffer = "";
             }
             else
@@ -141,6 +145,38 @@ public class TxtReader
         //should have at least 1 quantitative variable
     }
 
+    private static bool IsQuantitativeVariable(string textValue)
+    {
+        float x;
+        return Single.TryParse(textValue, NumberStyles.Any, CultureInfo.InvariantCulture, out x);
+    }
+
+    public static int[] CountSummary(string text)
+    {
+        int[] QuantiQualiIndividuals = new int[3];
+        //UnityEngine.Debug.Log(text.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries));
+
+        string[] lines = text.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+        QuantiQualiIndividuals[2] = lines.Length - 1;
+
+        int countQuali = 0;
+        int countQuanti = 0;
+
+        string[] secondLine = lines[1].Split(separator);
+        for (int i=1; i<secondLine.Length;i++) //doesn't count the first value which is the label
+        {
+            UnityEngine.Debug.Log("ligne : " + secondLine[i]);
+            if (IsQuantitativeVariable(secondLine[i])) countQuanti++;
+            else countQuali++;
+        }
+
+        QuantiQualiIndividuals[0] = countQuanti;
+        QuantiQualiIndividuals[1] = countQuali;
+
+        foreach (int i in QuantiQualiIndividuals) UnityEngine.Debug.Log(i);
+
+        return QuantiQualiIndividuals;
+    }
 
 
 }

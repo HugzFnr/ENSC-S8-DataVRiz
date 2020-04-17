@@ -23,13 +23,14 @@ public class PlotPoints : MonoBehaviour
     {
         textAssetsList = new List<TextAsset>();
         InitTextAssetsList();
+        TxtReader.CountSummary(TextFromIndex(startIndex));
         StartVisualization(startIndex);
     }
 
     public void StartVisualization(int datasetIndex)
     {
         ResetVisualization();
-        labelsList = TxtReader.GetVariablesLabels(textAssetsList[datasetIndex].text);
+        labelsList = TxtReader.GetVariablesLabels(TextFromIndex(datasetIndex));
         PlotPointsFunction(datasetIndex);
         NameAxis();
     }
@@ -37,7 +38,7 @@ public class PlotPoints : MonoBehaviour
     public void PlotPointsFunction(int datasetIndex)
     {
         //Debug.Log(dataFileName);
-        pointsList = TxtReader.Read(textAssetsList[datasetIndex].text);
+        pointsList = TxtReader.Read(TextFromIndex(datasetIndex));
         TxtReader.StandardizeData(pointsList); //when mean and SD useful, get them here
 
         foreach (DataLine d in pointsList)
@@ -91,11 +92,14 @@ public class PlotPoints : MonoBehaviour
 
     public bool IsValidFile(string fileName) //csv and txt are the only data formats both used for statistics and usable via Unity TextAsset
     {
-        string pathToFile;
-        pathToFile = Application.dataPath + "/Resources/DataFiles/" + fileName;
-        //Debug.Log(pathToFile);
-        if (File.Exists(pathToFile + ".txt") || File.Exists(pathToFile + ".csv")) return true;
-        else return true;
+        ////should have used streaming Assets for this to work
+        //string pathToFile;
+        //pathToFile = Application.dataPath + "/Resources/DataFiles/" + fileName;
+        ////Debug.Log(pathToFile);
+        //if (File.Exists(pathToFile + ".txt") || File.Exists(pathToFile + ".csv")) return true;
+        //else return true;
+
+        return true;
         
         //check dimensions via txtReader??
     }
@@ -118,6 +122,11 @@ public class PlotPoints : MonoBehaviour
             Transform t = PointHolder.transform.GetChild(i);
             Destroy(t.gameObject);
         }
+    }
+
+    private string TextFromIndex(int index)
+    {
+        return textAssetsList[index].text;
     }
 
 }
