@@ -26,6 +26,7 @@ public class PlotPoints : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        Debug.Log(Application.streamingAssetsPath);
         textAssetsList = new List<TextAsset>();
         pointsList = new List<DataLine>();
 
@@ -82,6 +83,7 @@ public class PlotPoints : MonoBehaviour
             n.transform.position = new Vector3(xpos+reference.x, ypos+reference.y, zpos+reference.z);
             n.transform.name = d.Label;
             n.GetComponent<DataSphereDisplayer>().Individual = d;
+            n.GetComponent<Renderer>().material.SetColor("_EmissionColor",d.FactorColor);
         }
     }
 
@@ -96,7 +98,6 @@ public class PlotPoints : MonoBehaviour
 
         if (zIndex != -1) axisNames.transform.GetChild(2).gameObject.GetComponent<Text>().text = "Z : " + labelsList[zIndex - 1];
         else axisNames.transform.GetChild(2).gameObject.GetComponent<Text>().text = "Unused Z axis";
-
     }
 
     public string LoadTextFromAsset(string path)
@@ -153,7 +154,7 @@ public class PlotPoints : MonoBehaviour
 
     /// <summary>
     /// Initialize the pointsList with newly created DataLines corresponding to dimensionsList. If an index is ==-1, dimension
-    /// should not be displayed/can not be displayed : in that case quanti are 0 and labels are null (default)
+    /// should not be displayed/can not be displayed : in that case quanti are 0 and labels are ""
     /// </summary>
     /// <param name="xIndex">Index of dimension to be displayed in X axis</param>
     /// <param name="yIndex">Index of dimension to be displayed in Z axis</param>
@@ -185,13 +186,14 @@ public class PlotPoints : MonoBehaviour
         for (int i = 0; i < qtx.Values.Count; i++)
         { 
             emptyQuanti.Values.Add(0.0f);
-            emptyQuali.Values.Add(null);
+            emptyQuali.Values.Add("");
 
             DataLine d = new DataLine(names.Values[i], qtx.Values[i], qty.Values[i], qtz.Values[i], ql.Values[i]);
             d.XLabel = qtx.Label;
             d.YLabel = qty.Label;
             d.ZLabel = qtz.Label;
             d.QLabel = ql.Label;
+            d.FactorColor = ql.DifferentiateFactorsColors()[ql.Values[i]];
             pointsList.Add(d);
         }
 

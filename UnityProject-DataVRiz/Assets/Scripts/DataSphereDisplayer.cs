@@ -9,8 +9,8 @@ public class DataSphereDisplayer : MonoBehaviour
     private bool isDisplayed;
     private bool isGazedAndToggled;
 
-    private Material defaultMat;
-    public Material activatedMat;
+    //private Material defaultMat;
+    //public Material activatedMat; not compatible with quanti
 
     private DataLine _individual;
 
@@ -25,7 +25,7 @@ public class DataSphereDisplayer : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        defaultMat = GetComponent<Renderer>().material;
+        //defaultMat = GetComponent<Renderer>().material;
     }
 
     public void GazeOn()
@@ -61,7 +61,7 @@ public class DataSphereDisplayer : MonoBehaviour
         transform.GetChild(0).gameObject.SetActive(true);
         transform.GetChild(0).transform.localScale = new Vector3(lastScaleAsked,lastScaleAsked,lastScaleAsked);
 
-        GetComponent<Renderer>().material = activatedMat;
+        //GetComponent<Renderer>().material = activatedMat;
 
         isDisplayed = true;
     }
@@ -70,7 +70,7 @@ public class DataSphereDisplayer : MonoBehaviour
     {
         transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
         transform.GetChild(0).gameObject.SetActive(false);
-        GetComponent<Renderer>().material = defaultMat;
+        //GetComponent<Renderer>().material = defaultMat;
 
         isDisplayed = false;
     }
