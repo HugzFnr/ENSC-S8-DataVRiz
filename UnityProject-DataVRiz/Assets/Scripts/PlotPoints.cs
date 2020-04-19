@@ -39,10 +39,11 @@ public class PlotPoints : MonoBehaviour
         ResetVisualization();
         ReadDimensions(TextFromIndex(datasetIndex));
         labelsList = TxtReader.GetVariablesLabels(TextFromIndex(datasetIndex));
-        MakeDataLines(1, 2, 4, 5);
-        PlotPointsFunction();
-        NameAxis(1,2,4);
 
+        int[] firstDims = FindFirstDimensions(dimensionsList);
+        MakeDataLines(firstDims[0],firstDims[1],firstDims[2],firstDims[3]);        
+        PlotPointsFunction();
+ 
         //List<Dimension> dimensions = TxtReader.Read(TextFromIndex(datasetIndex));
         //QualiDimension qt = (QualiDimension)dimensions[0];
         //Debug.Log(qt.Label);
@@ -54,7 +55,6 @@ public class PlotPoints : MonoBehaviour
 
     public void PlotPointsFunction()
     {
-
         TxtReader.StandardizeData(pointsList); //when mean and SD useful, get them here
 
         foreach (DataLine d in pointsList)
@@ -73,7 +73,7 @@ public class PlotPoints : MonoBehaviour
             {
                 xpos = d.XValue;
                 ypos = d.YValue;
-                zpos = d.XValue;
+                zpos = d.ZValue;
             }
             //GameObject n = new GameObject();
             //n.transform.parent = PointHolder.transform;
@@ -88,9 +88,14 @@ public class PlotPoints : MonoBehaviour
     public void NameAxis(int xIndex, int yIndex, int zIndex)
     {        
         Transform axisNames = PointHolder.transform.GetChild(1);
-        axisNames.transform.GetChild(0).gameObject.GetComponent<Text>().text = "X : " + labelsList[xIndex-1];
-        axisNames.transform.GetChild(1).gameObject.GetComponent<Text>().text = "Y : " + labelsList[yIndex-1];
-        axisNames.transform.GetChild(2).gameObject.GetComponent<Text>().text = "Z : " + labelsList[zIndex-1];
+        if (xIndex != -1) axisNames.transform.GetChild(0).gameObject.GetComponent<Text>().text = "X : " + labelsList[xIndex - 1];
+        else axisNames.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Unused X axis";
+
+        if (yIndex != -1) axisNames.transform.GetChild(1).gameObject.GetComponent<Text>().text = "Y : " + labelsList[yIndex - 1];
+        else axisNames.transform.GetChild(1).gameObject.GetComponent<Text>().text = "Unused Y axis";
+
+        if (zIndex != -1) axisNames.transform.GetChild(2).gameObject.GetComponent<Text>().text = "Z : " + labelsList[zIndex - 1];
+        else axisNames.transform.GetChild(2).gameObject.GetComponent<Text>().text = "Unused Z axis";
 
     }
 
@@ -121,7 +126,8 @@ public class PlotPoints : MonoBehaviour
         foreach (object o in uncheckedList)
         {
             TextAsset t = (TextAsset) o;
-            if (IsValidFile(t.name) && t.text !="") textAssetsList.Add(t);            
+            if (IsValidFile(t.name) && t.text !="") textAssetsList.Add(t);
+            Debug.Log(t.name);
         }
     }
 
@@ -145,17 +151,42 @@ public class PlotPoints : MonoBehaviour
         dimensionsList = TxtReader.Read(text);
     }
 
+    /// <summary>
+    /// Initialize the pointsList with newly created DataLines corresponding to dimensionsList. If an index is ==-1, dimension
+    /// should not be displayed/can not be displayed : in that case quanti are 0 and labels are null (default)
+    /// </summary>
+    /// <param name="xIndex">Index of dimension to be displayed in X axis</param>
+    /// <param name="yIndex">Index of dimension to be displayed in Z axis</param>
+    /// <param name="zIndex">Index of dimension to be displayed in Y axis</param>
+    /// <param name="qIndex">Index of dimension to be displayed with different materials</param>
     public void MakeDataLines(int xIndex, int yIndex, int zIndex, int qIndex)
     {
+        QuantiDimension emptyQuanti = new QuantiDimension();
+        QualiDimension emptyQuali = new QualiDimension();
+
+        QuantiDimension qtx, qty, qtz;
+        QualiDimension ql;
+
         pointsList.Clear();
-        QuantiDimension qtx = (QuantiDimension)dimensionsList[xIndex];
-        QuantiDimension qty = (QuantiDimension)dimensionsList[yIndex];
-        QuantiDimension qtz = (QuantiDimension)dimensionsList[zIndex];
-        QualiDimension ql = (QualiDimension)dimensionsList[qIndex];
+        if (xIndex != -1) qtx = (QuantiDimension)dimensionsList[xIndex];
+        else qtx = emptyQuanti;
+
+        if (yIndex != -1) qty = (QuantiDimension)dimensionsList[yIndex];
+        else qty = emptyQuanti;
+
+        if (zIndex != -1) qtz = (QuantiDimension)dimensionsList[zIndex];
+        else qtz = emptyQuanti;
+
+        if (qIndex != -1) ql = (QualiDimension)dimensionsList[qIndex];
+        else ql = emptyQuali;
+
         QualiDimension names = (QualiDimension)dimensionsList[0];
 
         for (int i = 0; i < qtx.Values.Count; i++)
-        {
+        { 
+            emptyQuanti.Values.Add(0.0f);
+            emptyQuali.Values.Add(null);
+
             DataLine d = new DataLine(names.Values[i], qtx.Values[i], qty.Values[i], qtz.Values[i], ql.Values[i]);
             d.XLabel = qtx.Label;
             d.YLabel = qty.Label;
@@ -163,6 +194,35 @@ public class PlotPoints : MonoBehaviour
             d.QLabel = ql.Label;
             pointsList.Add(d);
         }
+
+        NameAxis(xIndex, yIndex, zIndex);
+    }
+    /// <summary>
+    /// Finds (and check if exists) first 3 quanti dimensions and first quali variables in the dimensionsList
+    /// </summary>
+    /// <returns> array is in order : first quanti, second quanti, third quanti, first quali, -1 if none found </returns>
+    private int[] FindFirstDimensions(List<Dimension> ld)
+    {
+        int quanti1 = -1;
+        int quanti2 = -1;
+        int quanti3 = -1;
+        int quali = -1;
+
+        for (int i = 1; i < ld.Count; i++)
+        {
+            if (ld[i] is QuantiDimension)
+            {
+                if (quanti1 == -1) quanti1 = i;
+                else if (quanti2 == -1) quanti2 = i;
+                else if (quanti3 == -1) quanti3 = i;
+            }
+            else if (ld[i] is QualiDimension && quali==-1)
+            {
+                quali = i;
+            }
+        }
+
+        return (new int[] { quanti1, quanti2, quanti3, quali });
     }
 
 }

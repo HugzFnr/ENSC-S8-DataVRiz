@@ -118,14 +118,18 @@ public class DataLine
 
     public override string ToString()
     {
-        return "Individual's label : " + Label
-            + "\n" + XLabel + " : " + XValue
-            + "\n" + YLabel + " : " + YValue
-            + "\n" + ZLabel + " : " + ZValue
-            + "\n" + QLabel + " : " + QValue
-            + "\nStandard X : " + XStandardValue
-            + "\nStandard Y : " + YStandardValue
-            + "\nStandard Z : " + ZStandardValue;
+        string display = "";
+
+        if (Label != null) display += "Individual's label : " + Label;
+        if (XLabel!= null) display+= "\n" + XLabel + " : " + XValue;
+        if (YLabel != null) display += "\n" + YLabel + " : " + YValue;
+        if (ZLabel != null) display += "\n" + ZLabel + " : " + ZValue;
+        if (QLabel != null) display += "\n" + QLabel + " : " + QValue;
+        if (XLabel != null) display += "\nStandard X : " + XStandardValue;
+        if (YLabel != null) display += "\nStandard Y : " + YStandardValue;
+        if (ZLabel != null) display += "\nStandard Z : " + ZStandardValue;
+
+        return display;
     }
 
 }

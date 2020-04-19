@@ -26,8 +26,6 @@ public class TxtReader
         QualiDimension q0 = (QualiDimension)dimensionsList[0];
         q0.IsLabelColumn = true;
 
-        UnityEngine.Debug.Log(dimensionsList.Count);
-
         for (int i=1;i<lines.Length;i++)
         {
             string[] currentLine = lines[i].Split(separator);
@@ -49,72 +47,9 @@ public class TxtReader
         return dimensionsList;
     }
 
-    //public static List<DataLine> Read(string text)
-    //{
-    //    List<DataLine> pointsList = new List<DataLine>();
-    //    bool isLabelLine = true;    
-
-    //        foreach (var line in text.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
-    //        { 
-    //            if (isLabelLine)
-    //            {
-    //            //skip first line
-    //                isLabelLine = false;
-    //            }
-    //            else
-    //            {            
-    //                string label="";
-    //                string xValue="";
-    //                string yValue="";
-    //                string zValue="";
-    //                char replace=' ';
-    //                int step = 0; //0 is waiting for label; 1 is label assigned, 2 is xvalue assigned, 4 is complete
-
-    //                foreach (char ch in line)
-    //                {
-    //                    replace = ch; //test pr le input string format wrong
-    //                    if (ch == separator) step++;
-    //                    else if (step == 0)
-    //                    {
-    //                        label += replace;
-    //                    }
-    //                    else if (step==1)
-    //                    {
-    //                        xValue += replace;
-    //                    }
-    //                    else if (step==2)
-    //                    {
-    //                        yValue += replace;
-    //                    }
-    //                    else if (step==3)
-    //                    {
-    //                        zValue += replace;
-    //                    }
-    //            }
-
-    //            float xParsedValue = float.Parse(xValue, CultureInfo.InvariantCulture);
-    //            float yParsedValue = float.Parse(yValue, CultureInfo.InvariantCulture);
-    //            float zParsedValue = float.Parse(zValue, CultureInfo.InvariantCulture);              
-
-
-    //            //Debug.Log("tent x :" + xvalue + "\n tent y : " + yvalue + "\n tent z : " + zvalue);
-    //            pointsList.Add(new DataLine(label,
-    //            xParsedValue,
-    //            yParsedValue,
-    //            zParsedValue));                                                               
-          
-    //            }
-    //    }
-
-    //    return pointsList;
-    //}
-
     public static List<string> GetVariablesLabels(string text)
     {
         string labelLine = text.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)[0];
-
-        string buffer = "";
-        char replace = ' ';
 
         List<string> labels = new List<string>();
 
@@ -158,9 +93,14 @@ public class TxtReader
 
         foreach (DataLine p in points)
         {
-            p.XStandardValue = (p.XValue - meansAndDeviations[0]) / meansAndDeviations[1];
-            p.YStandardValue = (p.YValue - meansAndDeviations[2]) / meansAndDeviations[3];
-            p.ZStandardValue = (p.ZValue - meansAndDeviations[4]) / meansAndDeviations[5];
+            if (meansAndDeviations[1] != 0) p.XStandardValue = (p.XValue - meansAndDeviations[0]) / meansAndDeviations[1];
+            else p.XStandardValue = 0;
+
+            if (meansAndDeviations[3] != 0) p.YStandardValue = (p.YValue - meansAndDeviations[2]) / meansAndDeviations[3];
+            else p.YStandardValue = 0;
+
+            if (meansAndDeviations[5] != 0) p.ZStandardValue = (p.ZValue - meansAndDeviations[4]) / meansAndDeviations[5];
+            else p.ZStandardValue = 0;
         }
 
         return meansAndDeviations;
