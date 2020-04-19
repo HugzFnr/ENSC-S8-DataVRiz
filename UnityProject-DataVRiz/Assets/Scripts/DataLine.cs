@@ -38,6 +38,14 @@ public class DataLine
         set { _zValue = value; }
     }
 
+    private string _qValue;
+
+    public string QValue
+    {
+        get { return _qValue; }
+        set { _qValue = value; }
+    }
+
     //standard values
     
     private float _xStandardValue;
@@ -63,7 +71,7 @@ public class DataLine
         get { return _zStandardValue; }
         set { _zStandardValue = value; }
     }
-
+    
     //labels for each dimension
 
     private string _xLabel;
@@ -90,12 +98,21 @@ public class DataLine
         set { _zLabel=value; }
     }
 
-    public DataLine(string label, float x, float y, float z)
+    private string _qLabel;
+
+    public string QLabel
+    {
+        get { return _qLabel; }
+        set { _qLabel = value; }
+    }
+
+    public DataLine(string label, float x, float y, float z, string q)
     {
         Label = label;
         XValue = x;
         YValue = y;
-        ZValue = z; 
+        ZValue = z;
+        QValue = q;
 
     }
 
@@ -105,6 +122,7 @@ public class DataLine
             + "\n" + XLabel + " : " + XValue
             + "\n" + YLabel + " : " + YValue
             + "\n" + ZLabel + " : " + ZValue
+            + "\n" + QLabel + " : " + QValue
             + "\nStandard X : " + XStandardValue
             + "\nStandard Y : " + YStandardValue
             + "\nStandard Z : " + ZStandardValue;

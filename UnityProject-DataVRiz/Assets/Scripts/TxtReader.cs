@@ -8,65 +8,106 @@ public class TxtReader
 {
     public static char separator = ','; //default
 
-    public static List<DataLine> Read(string text)
+    public static List<Dimension> Read(string text)
     {
-        List<DataLine> pointsList = new List<DataLine>();
-        bool isLabelLine = true;    
+        List<Dimension> dimensionsList = new List<Dimension>();
+        string[] lines = text.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
 
-            foreach (var line in text.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
-            { 
-                if (isLabelLine)
+        string[] secondLine = lines[1].Split(new string[] { separator.ToString(), "\"" }, StringSplitOptions.RemoveEmptyEntries);
+        //so that both "", or , starts aren't counted in the line
+        for (int k=0;k<secondLine.Length;k++)
+        {
+            if (IsQuantitativeVariable(secondLine[k]) & k!=0) dimensionsList.Add(new QuantiDimension()); //first column is always individual's label
+            else dimensionsList.Add(new QualiDimension());
+            if (k!=0) dimensionsList[k].Label = GetVariablesLabels(text)[k-1];
+        }
+        //dimensionsList.Add(new QualiDimension());
+        dimensionsList[0].Label = "IndividualLabel";
+        QualiDimension q0 = (QualiDimension)dimensionsList[0];
+        q0.IsLabelColumn = true;
+
+        UnityEngine.Debug.Log(dimensionsList.Count);
+
+        for (int i=1;i<lines.Length;i++)
+        {
+            string[] currentLine = lines[i].Split(separator);
+            for (int q=0;q<currentLine.Length;q++)
+            {
+                if (IsQuantitativeVariable(currentLine[q]) & q!=0)
                 {
-                //skip first line
-                    isLabelLine = false;
+                    QuantiDimension qt = (QuantiDimension)dimensionsList[q];
+                    qt.Values.Add(float.Parse(currentLine[q], CultureInfo.InvariantCulture));
                 }
                 else
-                {            
-                    string label="";
-                    string xValue="";
-                    string yValue="";
-                    string zValue="";
-                    char replace=' ';
-                    int step = 0; //0 is waiting for label; 1 is label assigned, 2 is xvalue assigned, 4 is complete
-
-                    foreach (char ch in line)
-                    {
-                        replace = ch; //test pr le input string format wrong
-                        if (ch == separator) step++;
-                        else if (step == 0)
-                        {
-                            label += replace;
-                        }
-                        else if (step==1)
-                        {
-                            xValue += replace;
-                        }
-                        else if (step==2)
-                        {
-                            yValue += replace;
-                        }
-                        else if (step==3)
-                        {
-                            zValue += replace;
-                        }
+                {
+                    QualiDimension ql = (QualiDimension)dimensionsList[q];
+                    ql.Values.Add(currentLine[q]);
                 }
-
-                float xParsedValue = float.Parse(xValue, CultureInfo.InvariantCulture);
-                float yParsedValue = float.Parse(yValue, CultureInfo.InvariantCulture);
-                float zParsedValue = float.Parse(zValue, CultureInfo.InvariantCulture);              
-
-
-                //Debug.Log("tent x :" + xvalue + "\n tent y : " + yvalue + "\n tent z : " + zvalue);
-                pointsList.Add(new DataLine(label,
-                xParsedValue,
-                yParsedValue,
-                zParsedValue));                                                               
-          
-                }
+            }
         }
 
-        return pointsList;
+        return dimensionsList;
     }
+
+    //public static List<DataLine> Read(string text)
+    //{
+    //    List<DataLine> pointsList = new List<DataLine>();
+    //    bool isLabelLine = true;    
+
+    //        foreach (var line in text.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
+    //        { 
+    //            if (isLabelLine)
+    //            {
+    //            //skip first line
+    //                isLabelLine = false;
+    //            }
+    //            else
+    //            {            
+    //                string label="";
+    //                string xValue="";
+    //                string yValue="";
+    //                string zValue="";
+    //                char replace=' ';
+    //                int step = 0; //0 is waiting for label; 1 is label assigned, 2 is xvalue assigned, 4 is complete
+
+    //                foreach (char ch in line)
+    //                {
+    //                    replace = ch; //test pr le input string format wrong
+    //                    if (ch == separator) step++;
+    //                    else if (step == 0)
+    //                    {
+    //                        label += replace;
+    //                    }
+    //                    else if (step==1)
+    //                    {
+    //                        xValue += replace;
+    //                    }
+    //                    else if (step==2)
+    //                    {
+    //                        yValue += replace;
+    //                    }
+    //                    else if (step==3)
+    //                    {
+    //                        zValue += replace;
+    //                    }
+    //            }
+
+    //            float xParsedValue = float.Parse(xValue, CultureInfo.InvariantCulture);
+    //            float yParsedValue = float.Parse(yValue, CultureInfo.InvariantCulture);
+    //            float zParsedValue = float.Parse(zValue, CultureInfo.InvariantCulture);              
+
+
+    //            //Debug.Log("tent x :" + xvalue + "\n tent y : " + yvalue + "\n tent z : " + zvalue);
+    //            pointsList.Add(new DataLine(label,
+    //            xParsedValue,
+    //            yParsedValue,
+    //            zParsedValue));                                                               
+          
+    //            }
+    //    }
+
+    //    return pointsList;
+    //}
 
     public static List<string> GetVariablesLabels(string text)
     {
@@ -77,24 +118,10 @@ public class TxtReader
 
         List<string> labels = new List<string>();
 
-        foreach (char ch in labelLine)
+        foreach (string s in labelLine.Split(new string[] { separator.ToString(), "\"" }, StringSplitOptions.RemoveEmptyEntries))
         {
-            replace = ch; 
-            if (ch == separator && buffer!="" && buffer != "\"\"") //for those datafiles starting labels line with their separator
-            {
-                labels.Add(buffer);
-                buffer = "";
-            }
-            else if (buffer == "\"\"") //for csv having a name for the label column
-            {
-                buffer = "";
-            }
-            else
-            {
-                buffer += ch;
-            }
+            labels.Add(s);
         }
-        labels.Add(buffer);
 
         return labels;
     }

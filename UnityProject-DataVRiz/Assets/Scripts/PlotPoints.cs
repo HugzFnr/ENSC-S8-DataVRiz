@@ -18,27 +18,43 @@ public class PlotPoints : MonoBehaviour
     private List<DataLine> pointsList;
     private List<string> labelsList;
     private List<TextAsset> textAssetsList;
+
+    private List<Dimension> dimensionsList;
+    //private List<QuantiDimension> quantisList;
+    //private List<QualiDimension> qualisList;
+
     // Start is called before the first frame update
     void Start()
     {
         textAssetsList = new List<TextAsset>();
+        pointsList = new List<DataLine>();
+
         InitTextAssetsList();
-        TxtReader.CountSummary(TextFromIndex(startIndex));
+        TxtReader.CountSummary(TextFromIndex(startIndex)); //for debug purposes
         StartVisualization(startIndex);
     }
 
     public void StartVisualization(int datasetIndex)
     {
         ResetVisualization();
+        ReadDimensions(TextFromIndex(datasetIndex));
         labelsList = TxtReader.GetVariablesLabels(TextFromIndex(datasetIndex));
-        PlotPointsFunction(datasetIndex);
-        NameAxis();
+        MakeDataLines(1, 2, 4, 5);
+        PlotPointsFunction();
+        NameAxis(1,2,4);
+
+        //List<Dimension> dimensions = TxtReader.Read(TextFromIndex(datasetIndex));
+        //QualiDimension qt = (QualiDimension)dimensions[0];
+        //Debug.Log(qt.Label);
+        //foreach (string f in qt.Values)
+        //{
+        //    Debug.Log(f);
+        //}
     }
 
-    public void PlotPointsFunction(int datasetIndex)
+    public void PlotPointsFunction()
     {
-        //Debug.Log(dataFileName);
-        pointsList = TxtReader.Read(TextFromIndex(datasetIndex));
+
         TxtReader.StandardizeData(pointsList); //when mean and SD useful, get them here
 
         foreach (DataLine d in pointsList)
@@ -65,21 +81,16 @@ public class PlotPoints : MonoBehaviour
             Vector3 reference = PointHolder.transform.position;
             n.transform.position = new Vector3(xpos+reference.x, ypos+reference.y, zpos+reference.z);
             n.transform.name = d.Label;
-            d.XLabel = labelsList[0];
-            d.YLabel = labelsList[1];
-            d.ZLabel = labelsList[2];
             n.GetComponent<DataSphereDisplayer>().Individual = d;
         }
     }
 
-    public void NameAxis()
+    public void NameAxis(int xIndex, int yIndex, int zIndex)
     {        
-        foreach (string s in labelsList) Debug.Log(s);
-
         Transform axisNames = PointHolder.transform.GetChild(1);
-        axisNames.transform.GetChild(0).gameObject.GetComponent<Text>().text = "X : " + labelsList[0];
-        axisNames.transform.GetChild(1).gameObject.GetComponent<Text>().text = "Y : " + labelsList[1];
-        axisNames.transform.GetChild(2).gameObject.GetComponent<Text>().text = "Z : " + labelsList[2];
+        axisNames.transform.GetChild(0).gameObject.GetComponent<Text>().text = "X : " + labelsList[xIndex-1];
+        axisNames.transform.GetChild(1).gameObject.GetComponent<Text>().text = "Y : " + labelsList[yIndex-1];
+        axisNames.transform.GetChild(2).gameObject.GetComponent<Text>().text = "Z : " + labelsList[zIndex-1];
 
     }
 
@@ -127,6 +138,31 @@ public class PlotPoints : MonoBehaviour
     private string TextFromIndex(int index)
     {
         return textAssetsList[index].text;
+    }
+
+    private void ReadDimensions(string text)
+    {
+        dimensionsList = TxtReader.Read(text);
+    }
+
+    public void MakeDataLines(int xIndex, int yIndex, int zIndex, int qIndex)
+    {
+        pointsList.Clear();
+        QuantiDimension qtx = (QuantiDimension)dimensionsList[xIndex];
+        QuantiDimension qty = (QuantiDimension)dimensionsList[yIndex];
+        QuantiDimension qtz = (QuantiDimension)dimensionsList[zIndex];
+        QualiDimension ql = (QualiDimension)dimensionsList[qIndex];
+        QualiDimension names = (QualiDimension)dimensionsList[0];
+
+        for (int i = 0; i < qtx.Values.Count; i++)
+        {
+            DataLine d = new DataLine(names.Values[i], qtx.Values[i], qty.Values[i], qtz.Values[i], ql.Values[i]);
+            d.XLabel = qtx.Label;
+            d.YLabel = qty.Label;
+            d.ZLabel = qtz.Label;
+            d.QLabel = ql.Label;
+            pointsList.Add(d);
+        }
     }
 
 }
