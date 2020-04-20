@@ -117,7 +117,11 @@ public class TxtReader
         float x;
         return Single.TryParse(textValue, NumberStyles.Any, CultureInfo.InvariantCulture, out x);
     }
-
+    /// <summary>
+    /// Based on second line, count the number of quanti and quali variables, and gives the number of individuals in the dataset. 
+    /// </summary>
+    /// <param name="text">Complete dataset to be analyzed</param>
+    /// <returns>0 value is the count of quanti variables, 1 is for quali variable, 2 is for number of individuals</returns>
     public static int[] CountSummary(string text)
     {
         int[] QuantiQualiIndividuals = new int[3];
@@ -138,8 +142,6 @@ public class TxtReader
 
         QuantiQualiIndividuals[0] = countQuanti;
         QuantiQualiIndividuals[1] = countQuali;
-
-        foreach (int i in QuantiQualiIndividuals) UnityEngine.Debug.Log(i);
 
         return QuantiQualiIndividuals;
     }

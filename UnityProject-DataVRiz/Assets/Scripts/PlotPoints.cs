@@ -8,15 +8,16 @@ using UnityEngine.UI;
 
 public class PlotPoints : MonoBehaviour
 {
-    public GameObject PointPrefab, PointHolder, Player;
-    public string dataFileName;
+    public GameObject PointPrefab, PointHolder, Player, DatasetSelectCanvas,DatasetSelectButton;
     public bool useStandardizedData = true;
     public int startIndex = 0;
     public Material defaultCubeMat;
+    public int maxNumberOfIndividuals = 10000;
 
     private List<DataLine> pointsList;
     private List<string> labelsList;
     private List<TextAsset> textAssetsList;
+    private List<GameObject> buttonsDataSelect;
 
     private List<Dimension> dimensionsList;
     //private List<QuantiDimension> quantisList;
@@ -27,11 +28,14 @@ public class PlotPoints : MonoBehaviour
     {
         textAssetsList = new List<TextAsset>();
         pointsList = new List<DataLine>();
+        buttonsDataSelect = new List<GameObject>();
         QualiDimension.defaultMat = defaultCubeMat;
 
         InitTextAssetsList();
-        TxtReader.CountSummary(TextFromIndex(startIndex)); //for debug purposes
+        InitializeDatasetSelectButtons();
         StartVisualization(startIndex);
+        ToggleButton(buttonsDataSelect[startIndex]);
+
     }
 
     public void StartVisualization(int datasetIndex)
@@ -134,7 +138,7 @@ public class PlotPoints : MonoBehaviour
         else throw new System.Exception("Data asset could not be loaded at path : " + path);
     }
 
-    public bool IsValidFile(string fileName) //csv and txt are the only data formats both used for statistics and usable via Unity TextAsset
+    public bool IsValidFile(TextAsset ta) //csv and txt are the only data formats both used for statistics and usable via Unity TextAsset
     {
         ////should have used streaming Assets for this to work
         //string pathToFile;
@@ -143,7 +147,9 @@ public class PlotPoints : MonoBehaviour
         //if (File.Exists(pathToFile + ".txt") || File.Exists(pathToFile + ".csv")) return true;
         //else return true;
 
-        return true;
+        int[] infos = TxtReader.CountSummary(ta.text);
+        if (infos[2] <= maxNumberOfIndividuals && infos[0] >= 2) return true; //file has to have minimum 2 quanti variables in order to be selectable
+        else return false;
         
         //check dimensions via txtReader??
     }
@@ -154,8 +160,7 @@ public class PlotPoints : MonoBehaviour
         foreach (object o in uncheckedList)
         {
             TextAsset t = (TextAsset) o;
-            if (IsValidFile(t.name) && t.text !="") textAssetsList.Add(t);
-            Debug.Log(t.name);
+            if (IsValidFile(t) && t.text !="") textAssetsList.Add(t);
         }
     }
 
@@ -243,6 +248,48 @@ public class PlotPoints : MonoBehaviour
         }
 
         return (new int[] { quanti1, quanti2, quanti3, quali });
+    }
+
+    private void AssignStartVisualizationToButtonEvent(GameObject button, int index)
+    {
+        button.GetComponent<ButtonActivator>().ClickEvent.AddListener(delegate { StartVisualization(index); });
+        button.GetComponent<ButtonActivator>().ClickEvent.AddListener(delegate { ToggleButton(button); });
+    }
+
+    private void ToggleButton(GameObject button)
+    {
+        foreach (GameObject g in buttonsDataSelect)
+        {
+            g.GetComponent<Image>().color = Color.white;
+        }
+        button.GetComponent<Image>().color = Color.cyan;
+    }
+
+    private void InitializeDatasetSelectButtons()
+    {
+        int i = 0;
+        int nbLines = 1+ (textAssetsList.Count / 7); //necessary lines to display the datasets available
+        foreach (TextAsset ta in textAssetsList)
+        {
+            int idxLigne = nbLines - (i / 7) - 1; //top is line nbLines-1;
+            int k = i % 7;
+
+            GameObject b = Instantiate(DatasetSelectButton,DatasetSelectCanvas.transform,false);
+            b.transform.localPosition = new Vector3(-1000 + (300 * (float)k), 200 + 150 * (float)idxLigne, 0f);
+
+            int[] infos = TxtReader.CountSummary(ta.text); //quanti quali number
+            AssignStartVisualizationToButtonEvent(b, i);
+            b.transform.name = "Button" + ta.name;
+            b.transform.GetChild(0).GetComponent<Text>().text = $"{ta.name} " +
+                $"\n{infos[2]} individuals" +
+                $"\n{infos[0]} quantitative variable(s)" +
+                $"\n{infos[1]} qualitative variable(s)";
+            b.SetActive(true);
+
+            buttonsDataSelect.Add(b);
+
+            i++;
+        }
     }
 
 }
