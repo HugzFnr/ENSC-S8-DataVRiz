@@ -106,12 +106,12 @@ public class DataLine
         set { _qLabel = value; }
     }
 
-    private UnityEngine.Color _factorColor;
+    private UnityEngine.Material _factorMaterial;
 
-    public UnityEngine.Color FactorColor
+    public UnityEngine.Material FactorMaterial
     {
-        get { return _factorColor; }
-        set { _factorColor = value; }
+        get { return _factorMaterial; }
+        set { _factorMaterial = value; }
     }
 
     public DataLine(string label, float x, float y, float z, string q)
@@ -128,14 +128,15 @@ public class DataLine
     {
         string display = "";
 
-        if (Label != "") display += "Individual's label : " + Label;
-        if (XLabel!= "") display+= "\n" + XLabel + " : " + XValue;
-        if (YLabel != "") display += "\n" + YLabel + " : " + YValue;
-        if (ZLabel != "") display += "\n" + ZLabel + " : " + ZValue;
-        if (QLabel != "") display += "\n" + QLabel + " : " + QValue;
-        if (XLabel != "") display += "\nStandard X : " + XStandardValue;
-        if (YLabel != "") display += "\nStandard Y : " + YStandardValue;
-        if (ZLabel != "") display += "\nStandard Z : " + ZStandardValue;
+        if (Label != null) display += "Individual's label : " + Label;
+        if (XLabel!= null) display+= "\n" + XLabel + " : " + XValue;
+        if (YLabel != null) display += "\n" + YLabel + " : " + YValue;
+        if (ZLabel != null) display += "\n" + ZLabel + " : " + ZValue;
+        display+="\n"; //if 8 lines are displayed, it shows the sphere between the two halves of the text
+        if (QLabel != null) display += "\n" + QLabel + " : " + QValue;
+        if (XLabel != null) display += "\nStandard X : " + XStandardValue;
+        if (YLabel != null) display += "\nStandard Y : " + YStandardValue;
+        if (ZLabel != null) display += "\nStandard Z : " + ZStandardValue;
 
         return display;
     }

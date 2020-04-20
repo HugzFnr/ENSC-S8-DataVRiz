@@ -38,13 +38,13 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.32705957, g: 0.33071414, b: 0.33714268, a: 1}
+  m_IndirectSpecularColor: {r: 0.28214312, g: 0.26850864, b: 0.24182868, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 11
-  m_GIWorkflowMode: 0
+  m_GIWorkflowMode: 1
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -52,7 +52,7 @@ LightmapSettings:
     m_AlbedoBoost: 1
     m_EnvironmentLightingMode: 0
     m_EnableBakedLightmaps: 1
-    m_EnableRealtimeLightmaps: 1
+    m_EnableRealtimeLightmaps: 0
   m_LightmapEditorSettings:
     serializedVersion: 10
     m_Resolution: 2
@@ -88,7 +88,8 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaIndirect: 2
     m_PVRFilteringAtrousPositionSigmaAO: 1
     m_ShowResolutionOverlay: 1
-  m_LightingDataAsset: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: 34c0431906918854c90b62f53d90a07b,
+    type: 2}
   m_UseShadowmask: 1
 --- !u!196 &4
 NavMeshSettings:
@@ -1551,7 +1552,7 @@ Light:
   m_SpotAngle: 30
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 2
+    m_Type: 0
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
@@ -1565,7 +1566,7 @@ Light:
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_Lightmapping: 4
+  m_Lightmapping: 2
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
   m_BounceIntensity: 1
@@ -2409,12 +2410,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 66171d6995a950147883329e56f03c50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  PointPrefab: {fileID: 8128455112396568255, guid: d3c5d5c4d72bdf54b935f7e503dc397f,
+  PointPrefab: {fileID: 8065628609342611258, guid: bd1990ca0e880a640aab3cea98a7ad96,
     type: 3}
-  dataFileName: charPersonRandomNoisyData
   PointHolder: {fileID: 2119799429}
+  Player: {fileID: 780563633}
+  dataFileName: charPersonRandomNoisyData
   useStandardizedData: 1
   startIndex: 4
+  defaultCubeMat: {fileID: 2100000, guid: e2d812790e08bb24a935813ac7d08245, type: 2}
 --- !u!4 &1960454940
 Transform:
   m_ObjectHideFlags: 0
@@ -2442,7 +2445,7 @@ GameObject:
   - component: {fileID: 2119799431}
   m_Layer: 0
   m_Name: PointsOrigin
-  m_TagString: Untagged
+  m_TagString: DataPoint
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

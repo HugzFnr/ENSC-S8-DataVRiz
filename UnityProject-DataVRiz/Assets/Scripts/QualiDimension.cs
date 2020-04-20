@@ -5,7 +5,10 @@ using UnityEngine;
 
 public class QualiDimension : Dimension
 {
-    private Color[] acceptableColors;
+    private static Color[] acceptableColors;
+    private static Material[] acceptableMaterials;
+    public static Material defaultMat;
+
     private List<string> _values;
 
     public List<string> Values
@@ -17,7 +20,19 @@ public class QualiDimension : Dimension
     public QualiDimension()
     {
         Values = new List<string>();
-        acceptableColors = new Color[] { Color.green, Color.red, Color.grey, Color.cyan, Color.magenta, Color.yellow };
+        if (acceptableColors==null) acceptableColors = new Color[] { new Color(0f, 0.5f, 0f,0f), Color.red, Color.grey, Color.cyan, Color.magenta, Color.yellow };
+        if (acceptableMaterials == null)
+        {
+            acceptableMaterials = new Material[acceptableColors.Length+1];
+            for (int i=0;i<acceptableMaterials.Length-1;i++)
+            {
+                acceptableMaterials[i] = new Material(defaultMat);
+                acceptableMaterials[i].SetColor("_EmissionColor", acceptableColors[i]);
+            }
+            acceptableMaterials[acceptableColors.Length] = new Material(defaultMat);
+            acceptableMaterials[acceptableColors.Length].SetColor("_EmissionColor", new Color(1f, 0.5f, 0f, 1f)); //additional categories after the 6th are in orange
+        }
+
         IsLabelColumn = false;
     }
 
@@ -34,18 +49,17 @@ public class QualiDimension : Dimension
         return Values.Distinct().ToList().Count;
     }
 
-    public Dictionary<string,Color> DifferentiateFactorsColors()
+    public Dictionary<string,Material> DifferentiateFactorsColors()
     {
-        Dictionary<string, Color> dict = new Dictionary<string, UnityEngine.Color>();
-        Color orange = new Color(1f, 0.5f, 0f, 1f);
+        Dictionary<string, Material> dict = new Dictionary<string, Material>();
 
         int c = 0;
         foreach (var value in Values.Distinct())
         {
-            if (c < acceptableColors.Length) dict.Add(value.ToString(), acceptableColors[c]);
-            else dict.Add(value.ToString(), orange);
+            if (c < acceptableColors.Length) dict.Add(value.ToString(), acceptableMaterials[c]);
+            else dict.Add(value.ToString(), acceptableMaterials[acceptableColors.Length]);
             c++; //comedy king
-                    }
+        }
 
         return dict;
     }

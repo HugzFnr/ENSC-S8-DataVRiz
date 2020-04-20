@@ -22,6 +22,15 @@ public class GazeInteraction2 : MonoBehaviour
     private Transform lastButtonTransform = null;
     private float adaptativeScale;
 
+    private float _pointDefaultScale;
+    public float PointDefaultScale
+    {
+        get { return _pointDefaultScale; }
+        set { _pointDefaultScale = value; }
+    }
+
+     
+
     private List<Transform> activatedSpheres;
 
     public bool isLookingAtButton
@@ -52,7 +61,7 @@ public class GazeInteraction2 : MonoBehaviour
         //    gvrClick.Invoke();
         //}
 
-        Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0f)); //creates a ray starting at the center of the camera
+        Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.5f)); //creates a ray starting at the center of the camera
         if (Physics.Raycast(ray, out _hit, distanceOfRay))
         {
             if (_hit.transform.CompareTag("DataPoint"))
@@ -104,7 +113,7 @@ public class GazeInteraction2 : MonoBehaviour
         GvrOff();
         if (lastSphereGazed != null)
         {
-            lastSphereGazed.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+            lastSphereGazed.localScale = new Vector3(PointDefaultScale, PointDefaultScale, PointDefaultScale);
             lastSphereGazed.gameObject.GetComponent<DataSphereDisplayer>().GazeOff();
         }
     }
@@ -145,4 +154,11 @@ public class GazeInteraction2 : MonoBehaviour
             }
         }
     }
+
+    public void Reset()
+    {
+        activatedSpheres.Clear();
+        lastSphereGazed = null;
+        lastButtonTransform = null;
+}
 }

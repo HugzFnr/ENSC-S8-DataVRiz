@@ -27,7 +27,7 @@ public class InputManager : MonoBehaviour
         if (Input.GetButton("Move"))
         {
             transform.position += Camera.main.transform.forward * playerSpeed * Time.deltaTime;
-            //use the canFly accordingly
+            GetComponent<GazeInteraction2>().AdaptSpheresDisplays();
         }
 
         //For cardboard smartphone

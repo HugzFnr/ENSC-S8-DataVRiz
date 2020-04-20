@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.UI;
@@ -9,11 +8,11 @@ using UnityEngine.UI;
 
 public class PlotPoints : MonoBehaviour
 {
-    public GameObject PointPrefab;
+    public GameObject PointPrefab, PointHolder, Player;
     public string dataFileName;
-    public GameObject PointHolder;
     public bool useStandardizedData = true;
     public int startIndex = 0;
+    public Material defaultCubeMat;
 
     private List<DataLine> pointsList;
     private List<string> labelsList;
@@ -26,9 +25,9 @@ public class PlotPoints : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log(Application.streamingAssetsPath);
         textAssetsList = new List<TextAsset>();
         pointsList = new List<DataLine>();
+        QualiDimension.defaultMat = defaultCubeMat;
 
         InitTextAssetsList();
         TxtReader.CountSummary(TextFromIndex(startIndex)); //for debug purposes
@@ -43,8 +42,9 @@ public class PlotPoints : MonoBehaviour
 
         int[] firstDims = FindFirstDimensions(dimensionsList);
         MakeDataLines(firstDims[0],firstDims[1],firstDims[2],firstDims[3]);        
-        PlotPointsFunction();
- 
+        PlotPointsFunction(CalculateDefaultScale());
+        Player.GetComponent<GazeInteraction2>().PointDefaultScale = CalculateDefaultScale();
+
         //List<Dimension> dimensions = TxtReader.Read(TextFromIndex(datasetIndex));
         //QualiDimension qt = (QualiDimension)dimensions[0];
         //Debug.Log(qt.Label);
@@ -54,7 +54,34 @@ public class PlotPoints : MonoBehaviour
         //}
     }
 
-    public void PlotPointsFunction()
+    public void ResetVisualization()
+    {
+        int nb = PointHolder.transform.childCount;
+        for (int i = 2; i < nb; i++)
+        {
+            Transform t = PointHolder.transform.GetChild(i);
+            Destroy(t.gameObject);
+        }
+        Player.GetComponent<GazeInteraction2>().Reset();
+    }
+    /// <summary>
+    /// Calculate a scale, varying from 0.2 to 0.6, based on how many individuals are to be displayed. For 100 points, 0.5 works well; for 1000 points 0.25 works well.
+    /// </summary>
+    /// <returns></returns>
+    private float CalculateDefaultScale()
+    {
+        QualiDimension headerColumn = (QualiDimension)dimensionsList[0];
+        int indivNb = headerColumn.Values.Count;
+        float indivNbFloat = (float)indivNb;
+        float formula = 1f;
+        if (indivNb > 10) formula = 1f / (2 * Mathf.Log((indivNbFloat / 10),10f));
+        Debug.Log("scale : " + formula);
+        if (formula < 0.2f) return 0.2f;
+        else if (formula > 0.6f) return 0.6f;
+        else return formula;
+    }
+
+    public void PlotPointsFunction(float pointScale)
     {
         TxtReader.StandardizeData(pointsList); //when mean and SD useful, get them here
 
@@ -76,14 +103,14 @@ public class PlotPoints : MonoBehaviour
                 ypos = d.YValue;
                 zpos = d.ZValue;
             }
-            //GameObject n = new GameObject();
-            //n.transform.parent = PointHolder.transform;
+
             GameObject n = Instantiate(PointPrefab, new Vector3(0,0,0), Quaternion.identity,PointHolder.transform);
             Vector3 reference = PointHolder.transform.position;
             n.transform.position = new Vector3(xpos+reference.x, ypos+reference.y, zpos+reference.z);
             n.transform.name = d.Label;
             n.GetComponent<DataSphereDisplayer>().Individual = d;
-            n.GetComponent<Renderer>().material.SetColor("_EmissionColor",d.FactorColor);
+            n.GetComponent<Renderer>().material = d.FactorMaterial;
+            n.transform.localScale = new Vector3(pointScale,pointScale,pointScale);
         }
     }
 
@@ -132,16 +159,6 @@ public class PlotPoints : MonoBehaviour
         }
     }
 
-    public void ResetVisualization()
-    {
-        int nb = PointHolder.transform.childCount;
-        for (int i=2; i<nb;i++)
-        {
-            Transform t = PointHolder.transform.GetChild(i);
-            Destroy(t.gameObject);
-        }
-    }
-
     private string TextFromIndex(int index)
     {
         return textAssetsList[index].text;
@@ -154,7 +171,7 @@ public class PlotPoints : MonoBehaviour
 
     /// <summary>
     /// Initialize the pointsList with newly created DataLines corresponding to dimensionsList. If an index is ==-1, dimension
-    /// should not be displayed/can not be displayed : in that case quanti are 0 and labels are ""
+    /// should not be displayed/can not be displayed : in that case quanti are 0 and quali are "", headers are null (default string)
     /// </summary>
     /// <param name="xIndex">Index of dimension to be displayed in X axis</param>
     /// <param name="yIndex">Index of dimension to be displayed in Z axis</param>
@@ -162,6 +179,7 @@ public class PlotPoints : MonoBehaviour
     /// <param name="qIndex">Index of dimension to be displayed with different materials</param>
     public void MakeDataLines(int xIndex, int yIndex, int zIndex, int qIndex)
     {
+        Debug.Log("asked indexes : " + xIndex+ yIndex+ zIndex+qIndex);
         QuantiDimension emptyQuanti = new QuantiDimension();
         QualiDimension emptyQuali = new QualiDimension();
 
@@ -193,7 +211,7 @@ public class PlotPoints : MonoBehaviour
             d.YLabel = qty.Label;
             d.ZLabel = qtz.Label;
             d.QLabel = ql.Label;
-            d.FactorColor = ql.DifferentiateFactorsColors()[ql.Values[i]];
+            d.FactorMaterial = ql.DifferentiateFactorsColors()[ql.Values[i]];
             pointsList.Add(d);
         }
 
