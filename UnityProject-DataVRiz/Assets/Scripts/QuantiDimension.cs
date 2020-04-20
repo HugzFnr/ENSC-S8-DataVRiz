@@ -16,4 +16,16 @@ public class QuantiDimension : Dimension
         Values = new List<float>();
     }
 
+    public static QuantiDimension LabelColumn(int size)
+    {
+        QuantiDimension labelDimension = new QuantiDimension();
+        for (int i = 1; i <= size; i++)
+        {
+            labelDimension.Values.Add(i);
+        }
+        labelDimension.Label = "Quanti header column";
+
+        return labelDimension;
+    }
+
 }

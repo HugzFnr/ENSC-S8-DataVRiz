@@ -33,15 +33,6 @@ public class QualiDimension : Dimension
             acceptableMaterials[acceptableColors.Length].SetColor("_EmissionColor", new Color(1f, 0.5f, 0f, 1f)); //additional categories after the 6th are in orange
         }
 
-        IsLabelColumn = false;
-    }
-
-    private bool _isLabelColumn;
-
-    public bool IsLabelColumn
-    {
-        get { return _isLabelColumn; }
-        set { _isLabelColumn = value; }
     }
 
     public int NbUniqueValues()
@@ -64,5 +55,16 @@ public class QualiDimension : Dimension
         return dict;
     }
 
+    public static QualiDimension LabelColumn(int size)
+    {
+        QualiDimension labelDimension = new QualiDimension();
+        for(int i=1;i<=size;i++)
+        {
+            labelDimension.Values.Add(i.ToString());
+        }
+        labelDimension.Label = "Quali header column";
+
+        return labelDimension;
+    }
 
 }

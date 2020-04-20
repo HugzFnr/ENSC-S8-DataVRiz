@@ -101,7 +101,6 @@ public class GazeInteraction2 : MonoBehaviour
 
         if (isLookingAtButton && imgCircle.fillAmount == 1 && gvrStatus)
         {
-            Debug.Log("did a thing!");
             if (lastButtonTransform != null) lastButtonTransform.gameObject.GetComponent<ButtonActivator>().DoTheThing();
             gvrStatus = false;
         }

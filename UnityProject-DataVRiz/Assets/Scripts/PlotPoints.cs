@@ -31,16 +31,16 @@ public class PlotPoints : MonoBehaviour
         buttonsDataSelect = new List<GameObject>();
         QualiDimension.defaultMat = defaultCubeMat;
 
-        InitTextAssetsList();
+        InitTextAssetsList();Debug.Log(textAssetsList.Count);
         InitializeDatasetSelectButtons();
         StartVisualization(startIndex);
         ToggleButton(buttonsDataSelect[startIndex]);
-
     }
 
     public void StartVisualization(int datasetIndex)
     {
         ResetVisualization();
+        Debug.Log("index demandé : " + datasetIndex);
         ReadDimensions(TextFromIndex(datasetIndex));
         labelsList = TxtReader.GetVariablesLabels(TextFromIndex(datasetIndex));
 
@@ -74,12 +74,11 @@ public class PlotPoints : MonoBehaviour
     /// <returns></returns>
     private float CalculateDefaultScale()
     {
-        QualiDimension headerColumn = (QualiDimension)dimensionsList[0];
-        int indivNb = headerColumn.Values.Count;
+        QualiDimension labelColumn = (QualiDimension)dimensionsList[0];
+        int indivNb = labelColumn.Values.Count;
         float indivNbFloat = (float)indivNb;
         float formula = 1f;
         if (indivNb > 10) formula = 1f / (2 * Mathf.Log((indivNbFloat / 10),10f));
-        Debug.Log("scale : " + formula);
         if (formula < 0.2f) return 0.2f;
         else if (formula > 0.6f) return 0.6f;
         else return formula;
@@ -95,7 +94,14 @@ public class PlotPoints : MonoBehaviour
             float ypos;
             float zpos;
 
-            if (useStandardizedData)
+            if (System.Single.IsNaN(d.XValue) || System.Single.IsNaN(d.YValue) || System.Single.IsNaN(d.ZValue)) //if incorrect line, won't be visible
+            {
+                xpos = -10f;
+                ypos = -10f;
+                zpos = -10f;
+                UnityEngine.Debug.Log("caught another one !");
+            }
+            else if (useStandardizedData)
             {
                 xpos = d.XStandardValue;
                 ypos = d.YStandardValue;
@@ -184,7 +190,6 @@ public class PlotPoints : MonoBehaviour
     /// <param name="qIndex">Index of dimension to be displayed with different materials</param>
     public void MakeDataLines(int xIndex, int yIndex, int zIndex, int qIndex)
     {
-        Debug.Log("asked indexes : " + xIndex+ yIndex+ zIndex+qIndex);
         QuantiDimension emptyQuanti = new QuantiDimension();
         QualiDimension emptyQuali = new QualiDimension();
 
@@ -246,7 +251,7 @@ public class PlotPoints : MonoBehaviour
                 quali = i;
             }
         }
-
+        
         return (new int[] { quanti1, quanti2, quanti3, quali });
     }
 
