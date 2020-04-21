@@ -8,20 +8,21 @@ using UnityEngine.UI;
 
 public class PlotPoints : MonoBehaviour
 {
-    public GameObject PointPrefab, PointHolder, Player, DatasetSelectCanvas,DatasetSelectButton;
+    public GameObject PointPrefab, PointHolder, Player, DatasetSelectCanvas, DatasetSelectButton, AxisChoiceCanvas, AxisChoiceButton;
     public bool useStandardizedData = true;
     public int startIndex = 0;
     public Material defaultCubeMat;
     public int maxNumberOfIndividuals = 10000;
 
+    private int[] lastIndexesAsked;
     private List<DataLine> pointsList;
     private List<string> labelsList;
     private List<TextAsset> textAssetsList;
     private List<GameObject> buttonsDataSelect;
+    private List<GameObject>[] buttonsAxisChoice;
 
     private List<Dimension> dimensionsList;
-    //private List<QuantiDimension> quantisList;
-    //private List<QualiDimension> qualisList;
+
 
     // Start is called before the first frame update
     void Start()
@@ -29,12 +30,19 @@ public class PlotPoints : MonoBehaviour
         textAssetsList = new List<TextAsset>();
         pointsList = new List<DataLine>();
         buttonsDataSelect = new List<GameObject>();
+        lastIndexesAsked = new int[4];
         QualiDimension.defaultMat = defaultCubeMat;
+
+        buttonsAxisChoice = new List<GameObject>[4];
+        for (int i = 0; i < buttonsAxisChoice.Length; i++)
+        {
+            buttonsAxisChoice[i] = new List<GameObject>();
+        }
 
         InitTextAssetsList();Debug.Log(textAssetsList.Count);
         InitializeDatasetSelectButtons();
         StartVisualization(startIndex);
-        ToggleButton(buttonsDataSelect[startIndex]);
+        ToggleButtonDataSelect(buttonsDataSelect[startIndex]);
     }
 
     public void StartVisualization(int datasetIndex)
@@ -44,8 +52,9 @@ public class PlotPoints : MonoBehaviour
         ReadDimensions(TextFromIndex(datasetIndex));
         labelsList = TxtReader.GetVariablesLabels(TextFromIndex(datasetIndex));
 
-        int[] firstDims = FindFirstDimensions(dimensionsList);
-        MakeDataLines(firstDims[0],firstDims[1],firstDims[2],firstDims[3]);        
+        lastIndexesAsked = FindFirstDimensions(dimensionsList);
+        InitializeAxisChoiceButtons();
+        MakeDataLines();        
         PlotPointsFunction(CalculateDefaultScale());
         Player.GetComponent<GazeInteraction2>().PointDefaultScale = CalculateDefaultScale();
 
@@ -56,6 +65,13 @@ public class PlotPoints : MonoBehaviour
         //{
         //    Debug.Log(f);
         //}
+    }
+
+    public void ChangeVisualization()
+    {
+        ResetVisualization();
+        MakeDataLines();
+        PlotPointsFunction(CalculateDefaultScale());        
     }
 
     public void ResetVisualization()
@@ -188,13 +204,19 @@ public class PlotPoints : MonoBehaviour
     /// <param name="yIndex">Index of dimension to be displayed in Z axis</param>
     /// <param name="zIndex">Index of dimension to be displayed in Y axis</param>
     /// <param name="qIndex">Index of dimension to be displayed with different materials</param>
-    public void MakeDataLines(int xIndex, int yIndex, int zIndex, int qIndex)
+    public void MakeDataLines()
     {
         QuantiDimension emptyQuanti = new QuantiDimension();
         QualiDimension emptyQuali = new QualiDimension();
 
         QuantiDimension qtx, qty, qtz;
         QualiDimension ql;
+
+        int xIndex, yIndex, zIndex, qIndex;
+        xIndex = lastIndexesAsked[0];
+        yIndex = lastIndexesAsked[1];
+        zIndex = lastIndexesAsked[2];
+        qIndex = lastIndexesAsked[3];
 
         pointsList.Clear();
         if (xIndex != -1) qtx = (QuantiDimension)dimensionsList[xIndex];
@@ -226,7 +248,48 @@ public class PlotPoints : MonoBehaviour
         }
 
         NameAxis(xIndex, yIndex, zIndex);
+        UpdateVariableSummaries();
     }
+
+    private void UpdateVariableSummaries()
+    {
+        GameObject XColumn = AxisChoiceCanvas.transform.GetChild(1).gameObject;
+        GameObject YColumn = AxisChoiceCanvas.transform.GetChild(2).gameObject;
+        GameObject ZColumn = AxisChoiceCanvas.transform.GetChild(3).gameObject;
+        GameObject QColumn = AxisChoiceCanvas.transform.GetChild(4).gameObject;
+
+        GameObject[] goTab = new GameObject[] { XColumn, YColumn, ZColumn, QColumn };
+
+        for (int i=0;i<lastIndexesAsked.Length;i++)
+        {
+            if (lastIndexesAsked[i]!=-1)
+            {
+                if (i!=3)
+                {
+                    QuantiDimension qt = (QuantiDimension)dimensionsList[lastIndexesAsked[i]];
+                    goTab[i].GetComponent<Text>().text = goTab[i].transform.name
+                        + "\nCurrent variable : " + qt.Label 
+                        +"\nMean : " + StatsHelper.CalculateMean(qt.Values)
+                        + "\n Standard deviation : " + StatsHelper.CalculateSD(qt.Values);
+                }
+                else
+                {
+                    QualiDimension ql = (QualiDimension)dimensionsList[lastIndexesAsked[i]];
+                    goTab[i].GetComponent<Text>().text = goTab[i].transform.name
+                        + "\nCurrent variable : " + ql.Label
+                        + "\nNumber of levels : " + ql.DifferentiateFactorsColors().Count;
+                }
+
+            }
+            else
+            {
+                goTab[i].GetComponent<Text>().text = goTab[i].transform.name + "\n Current variable : none";
+            }
+        }    
+
+
+    }
+
     /// <summary>
     /// Finds (and check if exists) first 3 quanti dimensions and first quali variables in the dimensionsList
     /// </summary>
@@ -258,12 +321,62 @@ public class PlotPoints : MonoBehaviour
     private void AssignStartVisualizationToButtonEvent(GameObject button, int index)
     {
         button.GetComponent<ButtonActivator>().ClickEvent.AddListener(delegate { StartVisualization(index); });
-        button.GetComponent<ButtonActivator>().ClickEvent.AddListener(delegate { ToggleButton(button); });
+        button.GetComponent<ButtonActivator>().ClickEvent.AddListener(delegate { ToggleButtonDataSelect(button); });
     }
 
-    private void ToggleButton(GameObject button)
+    private void AssignAxisChangeToButtonEvent(GameObject button, int internalIndex, int axisIndex)
+    {
+        button.GetComponent<ButtonActivator>().ClickEvent.AddListener(delegate { TryChangeAxis(internalIndex, axisIndex); });
+    }
+
+    private void TryChangeAxis(int internalIndex,int axisIndex)
+    {
+        bool hasChanged = false;
+        int correspondDimensionIndex = internalIndex + 1;  //because of header dimension, need a setoff of 1
+        //check if variable isn't alrdy displayed on another axis£
+        Debug.Log("intern index : " + internalIndex + " axisIndex : " + axisIndex);
+        if (axisIndex != 3)
+        {
+            if (axisIndex == 0 && lastIndexesAsked[1] != correspondDimensionIndex && lastIndexesAsked[2] != correspondDimensionIndex)
+            {
+                lastIndexesAsked[axisIndex] = correspondDimensionIndex;
+                hasChanged = true;
+            }
+            else if (axisIndex == 1 && lastIndexesAsked[0] != correspondDimensionIndex && lastIndexesAsked[2] != correspondDimensionIndex)
+            {
+                lastIndexesAsked[axisIndex] = correspondDimensionIndex;
+                hasChanged = true;
+            }
+            else if (axisIndex == 2 && lastIndexesAsked[1] != correspondDimensionIndex && lastIndexesAsked[0] != correspondDimensionIndex)
+            {
+                lastIndexesAsked[axisIndex] = correspondDimensionIndex;
+                hasChanged = true;
+            }
+            
+        }
+
+        if (hasChanged)
+        {
+            ToggleButtonAxisChoice(buttonsAxisChoice[axisIndex][internalIndex],axisIndex);
+            ChangeVisualization();
+        }
+
+        //check then
+        //ChangeVisu
+    }
+
+    private void ToggleButtonDataSelect(GameObject button)
     {
         foreach (GameObject g in buttonsDataSelect)
+        {
+            g.GetComponent<Image>().color = Color.white;
+        }
+        button.GetComponent<Image>().color = Color.cyan;
+    }
+
+    private void ToggleButtonAxisChoice(GameObject button, int axisIndex)
+    {
+        foreach (GameObject g in buttonsAxisChoice[axisIndex])
         {
             g.GetComponent<Image>().color = Color.white;
         }
@@ -296,5 +409,74 @@ public class PlotPoints : MonoBehaviour
             i++;
         }
     }
+
+    private void InitializeAxisChoiceButtons()
+    {
+        foreach(List<GameObject> l in buttonsAxisChoice)
+        {
+            l.Clear();
+        }
+
+        GameObject menu = AxisChoiceCanvas;
+        Transform XColumn = AxisChoiceCanvas.transform.GetChild(1);
+        Transform YColumn = AxisChoiceCanvas.transform.GetChild(2);
+        Transform ZColumn = AxisChoiceCanvas.transform.GetChild(3);
+        Transform QColumn = AxisChoiceCanvas.transform.GetChild(4);
+        Transform[] columnTab = new Transform[] { XColumn, YColumn, ZColumn, QColumn };
+
+        foreach (Transform tparent in columnTab)
+        {
+            foreach (Transform child in tparent)
+            {
+                Destroy(child.gameObject);
+            }
+        }
+
+        int t = 0;
+        int cptQt = 0;
+        int cptQl = 0;
+        foreach (Dimension d in dimensionsList)
+        {
+            if (t != 0) //skip headerDimension
+            {
+                if (d is QuantiDimension)
+                {
+                    QuantiDimension qd = (QuantiDimension)d;
+                    for (int iter = 0; iter < 3; iter++)
+                    {
+                        GameObject b = Instantiate(AxisChoiceButton, columnTab[iter].transform, false);
+                        b.transform.localPosition = new Vector3(0f, 100f + (float)cptQt * 75, 0);
+                        b.transform.name = qd.Label;
+                        b.transform.GetChild(0).GetComponent<Text>().text = qd.Label;
+
+                        if (lastIndexesAsked[iter] == t) ToggleButtonAxisChoice(b, iter); //highlight selected axis at start
+                        AssignAxisChangeToButtonEvent(b, cptQt, iter);
+                        b.SetActive(true);
+                        buttonsAxisChoice[iter].Add(b);
+                    }
+                    cptQt++;
+                }
+                else if (d is QualiDimension)
+                {
+                    QualiDimension ql = (QualiDimension)d;
+
+                    GameObject b2 = Instantiate(AxisChoiceButton, columnTab[3].transform, false);
+                    b2.transform.localPosition = new Vector3(0f, 100f + (float)cptQl * 75, 0);
+                    b2.transform.name = ql.Label;
+                    b2.transform.GetChild(0).GetComponent<Text>().text = ql.Label;
+
+                    if (lastIndexesAsked[3] == t) ToggleButtonAxisChoice(b2, 3);
+                    AssignAxisChangeToButtonEvent(b2, cptQl, 3);
+                    b2.SetActive(true);
+                    buttonsAxisChoice[3].Add(b2);
+
+                    cptQl++;
+                }
+            }
+            t++;
+        }
+
+        //assign infos for text
+     }
 
 }

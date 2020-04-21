@@ -10,7 +10,7 @@ public class StatsHelper
         float sum = 0;
         foreach (float f in values)
         {
-            sum += f;
+            if (!Single.IsNaN(f)) sum += f;
         }
         return (sum/values.Count);
     }
@@ -22,9 +22,12 @@ public class StatsHelper
         
         foreach (float f in values)
         {
-            double d = Convert.ToDouble(f - mean);
-            float pow = (float)Math.Pow(d, 2.0);
-            residuals.Add(pow);
+            if (!Single.IsNaN(f))
+            {
+                double d = Convert.ToDouble(f - mean);
+                float pow = (float)Math.Pow(d, 2.0);
+                residuals.Add(pow);
+            }
         }
 
         return Math.Sqrt(CalculateMean(residuals));
