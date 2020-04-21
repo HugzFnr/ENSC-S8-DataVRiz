@@ -58,13 +58,6 @@ public class PlotPoints : MonoBehaviour
         PlotPointsFunction(CalculateDefaultScale());
         Player.GetComponent<GazeInteraction2>().PointDefaultScale = CalculateDefaultScale();
 
-        //List<Dimension> dimensions = TxtReader.Read(TextFromIndex(datasetIndex));
-        //QualiDimension qt = (QualiDimension)dimensions[0];
-        //Debug.Log(qt.Label);
-        //foreach (string f in qt.Values)
-        //{
-        //    Debug.Log(f);
-        //}
     }
 
     public void ChangeVisualization()
@@ -172,8 +165,7 @@ public class PlotPoints : MonoBehaviour
         int[] infos = TxtReader.CountSummary(ta.text);
         if (infos[2] <= maxNumberOfIndividuals && infos[0] >= 2) return true; //file has to have minimum 2 quanti variables in order to be selectable
         else return false;
-        
-        //check dimensions via txtReader??
+
     }
 
     public void InitTextAssetsList()
@@ -228,6 +220,7 @@ public class PlotPoints : MonoBehaviour
         if (zIndex != -1) qtz = (QuantiDimension)dimensionsList[zIndex];
         else qtz = emptyQuanti;
 
+        Debug.Log("qIndex asked : " + qIndex);
         if (qIndex != -1) ql = (QualiDimension)dimensionsList[qIndex];
         else ql = emptyQuali;
 
@@ -324,17 +317,17 @@ public class PlotPoints : MonoBehaviour
         button.GetComponent<ButtonActivator>().ClickEvent.AddListener(delegate { ToggleButtonDataSelect(button); });
     }
 
-    private void AssignAxisChangeToButtonEvent(GameObject button, int internalIndex, int axisIndex)
+    private void AssignAxisChangeToButtonEvent(GameObject button, int dimensionIndex, int axisIndex, int internalIndex)
     {
-        button.GetComponent<ButtonActivator>().ClickEvent.AddListener(delegate { TryChangeAxis(internalIndex, axisIndex); });
+        button.GetComponent<ButtonActivator>().ClickEvent.AddListener(delegate { TryChangeAxis(dimensionIndex, axisIndex, internalIndex); });
     }
 
-    private void TryChangeAxis(int internalIndex,int axisIndex)
+    private void TryChangeAxis(int dimensionIndex,int axisIndex, int internalIndex)
     {
         bool hasChanged = false;
-        int correspondDimensionIndex = internalIndex + 1;  //because of header dimension, need a setoff of 1
-        //check if variable isn't alrdy displayed on another axis£
-        Debug.Log("intern index : " + internalIndex + " axisIndex : " + axisIndex);
+        int correspondDimensionIndex = dimensionIndex;
+        //check if variable isn't alrdy displayed on another axis
+        Debug.Log("intern index : " + dimensionIndex + " axisIndex : " + axisIndex);
         if (axisIndex != 3)
         {
             if (axisIndex == 0 && lastIndexesAsked[1] != correspondDimensionIndex && lastIndexesAsked[2] != correspondDimensionIndex)
@@ -354,33 +347,37 @@ public class PlotPoints : MonoBehaviour
             }
             
         }
-
+        else if (axisIndex==3)
+        {
+            if (lastIndexesAsked[3] != correspondDimensionIndex)
+            {
+                lastIndexesAsked[3] = correspondDimensionIndex;
+                hasChanged = true;
+            }
+        }
         if (hasChanged)
         {
             ToggleButtonAxisChoice(buttonsAxisChoice[axisIndex][internalIndex],axisIndex);
             ChangeVisualization();
         }
-
-        //check then
-        //ChangeVisu
     }
 
     private void ToggleButtonDataSelect(GameObject button)
     {
         foreach (GameObject g in buttonsDataSelect)
         {
-            g.GetComponent<Image>().color = Color.white;
+            g.GetComponent<Image>().color = Color.black;
         }
-        button.GetComponent<Image>().color = Color.cyan;
+        button.GetComponent<Image>().color = Color.blue;
     }
 
     private void ToggleButtonAxisChoice(GameObject button, int axisIndex)
     {
         foreach (GameObject g in buttonsAxisChoice[axisIndex])
         {
-            g.GetComponent<Image>().color = Color.white;
+            g.GetComponent<Image>().color = Color.black;
         }
-        button.GetComponent<Image>().color = Color.cyan;
+        button.GetComponent<Image>().color = Color.blue;
     }
 
     private void InitializeDatasetSelectButtons()
@@ -450,7 +447,7 @@ public class PlotPoints : MonoBehaviour
                         b.transform.GetChild(0).GetComponent<Text>().text = qd.Label;
 
                         if (lastIndexesAsked[iter] == t) ToggleButtonAxisChoice(b, iter); //highlight selected axis at start
-                        AssignAxisChangeToButtonEvent(b, cptQt, iter);
+                        AssignAxisChangeToButtonEvent(b, t, iter, cptQt);
                         b.SetActive(true);
                         buttonsAxisChoice[iter].Add(b);
                     }
@@ -466,7 +463,7 @@ public class PlotPoints : MonoBehaviour
                     b2.transform.GetChild(0).GetComponent<Text>().text = ql.Label;
 
                     if (lastIndexesAsked[3] == t) ToggleButtonAxisChoice(b2, 3);
-                    AssignAxisChangeToButtonEvent(b2, cptQl, 3);
+                    AssignAxisChangeToButtonEvent(b2, t, 3,cptQl);
                     b2.SetActive(true);
                     buttonsAxisChoice[3].Add(b2);
 

@@ -27,9 +27,7 @@ public class GazeInteraction2 : MonoBehaviour
     {
         get { return _pointDefaultScale; }
         set { _pointDefaultScale = value; }
-    }
-
-     
+    }     
 
     private List<Transform> activatedSpheres;
 
@@ -55,11 +53,6 @@ public class GazeInteraction2 : MonoBehaviour
             gvrTimer += Time.deltaTime;
             imgCircle.fillAmount = gvrTimer / totalTime;
         }
-
-        //if (gvrTimer > totalTime)
-        //{
-        //    gvrClick.Invoke();
-        //}
 
         Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0.5f)); //creates a ray starting at the center of the camera
         if (Physics.Raycast(ray, out _hit, distanceOfRay))

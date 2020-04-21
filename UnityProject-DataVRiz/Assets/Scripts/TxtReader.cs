@@ -134,12 +134,6 @@ public class TxtReader
         return meansAndDeviations;
     }
 
-    public static bool HasSomethingToDisplay(string text)
-    {
-        return true;
-        //should have at least 1 quantitative variable
-    }
-
     private static bool IsQuantitativeVariable(string textValue)
     {
         float x;
@@ -222,6 +216,4 @@ public class TxtReader
     {
         return line.Split(new string[] { separator.ToString(), "\"" }, StringSplitOptions.RemoveEmptyEntries);
     }
-
-
 }

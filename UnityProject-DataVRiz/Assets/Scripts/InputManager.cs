@@ -21,7 +21,7 @@ public class InputManager : MonoBehaviour
         if (Input.GetButtonDown("Quit"))
         {
             Application.Quit();
-            Debug.Log("tentative de quit");
+            Debug.Log("tried to quit");
         }
 
         if (Input.GetButton("Move"))
@@ -35,7 +35,7 @@ public class InputManager : MonoBehaviour
         foreach (Touch t in Input.touches) //if you keep the cardboard button pressed, you keep on moving in front of you
         {
             if (t.phase ==TouchPhase.Moved || t.phase==TouchPhase.Stationary) transform.position += Camera.main.transform.forward * playerSpeed * Time.deltaTime;
-            if (t.phase == TouchPhase.Ended) GetComponent<GazeInteraction2>().AdaptSpheresDisplays();
+            if (t.phase == TouchPhase.Ended) GetComponent<GazeInteraction2>().AdaptSpheresDisplays(); //texts rotate and scale in order to always be readablefrom your position
         }
     }
 }

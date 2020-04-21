@@ -21,7 +21,6 @@ public class DataSphereDisplayer : MonoBehaviour
         set { _individual = value; }
     }
 
-    // Start is called before the first frame update
     void Start()
     {
     }
@@ -35,7 +34,7 @@ public class DataSphereDisplayer : MonoBehaviour
     {
         isGazedAndToggled = false;
 
-        if (isDisplayed) //when gaze goes away from the point, it still needs to be scaled up, but its text should no longer be zoomed
+        if (isDisplayed) //when gaze goes away from the point, it still needs to be scaled up, but its text should is no longer be zoomed
         {
             ChangeScale();
         }

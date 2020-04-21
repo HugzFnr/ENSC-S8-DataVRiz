@@ -21,7 +21,7 @@ public class ToggleMenuButton : MonoBehaviour
     void ShowUI()
     {
         uiElement.SetActive(true);
-        GetComponent<Image>().color = Color.white;
+        GetComponent<Image>().color = Color.black;
         transform.GetChild(0).GetComponent<Text>().text = "Hide " + uiElement.transform.name;
         menuHidden = false;
     }
@@ -29,9 +29,8 @@ public class ToggleMenuButton : MonoBehaviour
     void HideUI()
     {
         uiElement.SetActive(false);
-        GetComponent<Image>().color = Color.magenta;
+        GetComponent<Image>().color = new Color(0.3f, 0f,0.4f,1f);
         transform.GetChild(0).GetComponent<Text>().text = "Show " + uiElement.transform.name;
         menuHidden = true;
-
     }
 }

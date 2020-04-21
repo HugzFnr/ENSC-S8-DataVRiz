@@ -15,6 +15,7 @@ public class StatsHelper
         return (sum/values.Count);
     }
 
+    //Calculates Standard deviation of the sample, which is a biased estimator of SD
     public static double CalculateSD(List<float> values)
     {
         float mean = CalculateMean(values);
@@ -29,7 +30,6 @@ public class StatsHelper
                 residuals.Add(pow);
             }
         }
-
         return Math.Sqrt(CalculateMean(residuals));
     }
 
