@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Collections;
 using System.Collections.Generic;
 
-public class StatsHelper
+public static class StatsHelper
 {
     public static float CalculateMean(List<float> values)
     {

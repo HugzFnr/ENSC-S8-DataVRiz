@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="ButtonActivator">
+    <Position X="9.25" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AABAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\ButtonActivator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataLine">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEVAAAAAEAB0YAQEIDAAAAAAAACAAAIABEAQKAjAAAE=</HashCode>
+      <FileName>Assets\Scripts\DataLine.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="GazeInteraction2">
+    <Position X="11.25" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAQACACCgAFAwQQAAABACAAQCCCAAAAAAAAAAARYg=</HashCode>
+      <FileName>Assets\Scripts\GazeInteraction2.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Dimension">
+    <Position X="3.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAEAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\Dimension.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DataSphereDisplayer">
+    <Position X="2.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAEAAAAICAAABBABAEAAAASEAAAAAIAAAAAAAAECAA=</HashCode>
+      <FileName>Assets\Scripts\DataSphereDisplayer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="PlotPoints">
+    <Position X="6" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAwUEIAADCgAFEAkBABAAMggKAAEQiBAAICgSQQAEAg=</HashCode>
+      <FileName>Assets\Scripts\PlotPoints.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="InputManager">
+    <Position X="13.75" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAABAACAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\InputManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="QualiDimension">
+    <Position X="4.25" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAAAAFAAAAAAABAAABAAAAEAAgAAAAACA=</HashCode>
+      <FileName>Assets\Scripts\QualiDimension.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="QuantiDimension">
+    <Position X="2.5" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAgAAAAACA=</HashCode>
+      <FileName>Assets\Scripts\QuantiDimension.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="StatsHelper">
+    <Position X="9.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAACAAAAQAAAAAAAAAAA=</HashCode>
+      <FileName>Assets\Scripts\StatsHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ToggleMenuButton">
+    <Position X="9.25" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAgAAAAAAAAAAAAAAAAAIAAQAAAAAgAAAAA=</HashCode>
+      <FileName>Assets\Scripts\ToggleMenuButton.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="TxtReader">
+    <Position X="7.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAABAAAgAAAAAIAAAAAAAAgEIAAAAAAAQAAAAIgAAA=</HashCode>
+      <FileName>Assets\Scripts\TxtReader.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

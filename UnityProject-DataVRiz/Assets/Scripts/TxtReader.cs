@@ -4,7 +4,7 @@ using System.IO;
 using System;
 using System.Globalization;
 
-public class TxtReader
+public static class TxtReader
 {
     public static char separator = ','; //default
 

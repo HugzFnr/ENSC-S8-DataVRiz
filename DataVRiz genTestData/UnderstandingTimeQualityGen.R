@@ -8,21 +8,18 @@ qualityOfThePresentations<-jitter(qualityOfThePresentations,factor=10)
 understandingOfTheProject<- timeSpentTryingMins*0.2 + qualityOfThePresentations*0.3
 understandingOfTheProject<-jitter(understandingOfTheProject,factor=100)
 
-test<-data.frame(understandingOfTheProject,timeSpentTryingMins,qualityOfThePresentations)
-
 availableCognitiveCapacityPossibilities<-factor(c("Low","Medium","High","Surhuman"))
-availableCognitiveCapacity<-c()
-for (val in timeSpentTryingMins)
-{
-  if (val < 11) {
-    availableCognitiveCapacity=availableCognitiveCapacityPossibilities[1]
-} else if (val<15) { availableCognitiveCapacity=availableCognitiveCapacityPossibilities[2]
-} else if (val<18) { availableCognitiveCapacity=availableCognitiveCapacityPossibilities[3]
-}else { availableCognitiveCapacity=availableCognitiveCapacityPossibilities[4]
+availableCognitiveCapacity<-c(1:745)
+k<-1
+for (val in timeSpentTryingMins) {
+  if (val < 11) { availableCognitiveCapacity[k]<-"Low"
+} else if (val<15) { availableCognitiveCapacity[k]<-"Medium"
+} else if (val<18) { availableCognitiveCapacity[k]<-"High"
+} else { availableCognitiveCapacity[k]<-"Surhuman"
 }
+  k=k+1
 }
 
+df<-data.frame(understandingOfTheProject,timeSpentTryingMins,qualityOfThePresentations,availableCognitiveCapacity)
 
-
-noisyData<-data.frame(sizeM,massKgNoisy,averageKcalEaten)
-write.csv(noisyData,"10kpointscharPersonNoisy.csv")
+write.csv(df,"UnderstandingTimeQuality.csv")
